@@ -77,7 +77,7 @@ export function Sidebar() {
       {/* Brand */}
       <div className="flex items-center gap-[var(--space-2)] px-[var(--space-5)] py-[var(--space-4)]">
         <span className="inline-block w-2 h-2 rounded-full bg-l-cyan" />
-        <span className="text-14-bold text-white">Lanbow 3.0</span>
+        <span className="text-14-bold text-white">服务支持系统</span>
       </div>
 
       {/* Navigation */}
