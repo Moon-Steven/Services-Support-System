@@ -50,7 +50,25 @@ export function KanbanCard({ card, visible, expanded, onToggle, onNavigate }: Ka
             {card.grade}
           </span>
         </div>
-        <Badge variant={card.badge}>{card.badgeText}</Badge>
+        {card.actions && card.actions.length > 0 ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              const primary = card.actions![0]
+              if (primary.type === 'approval') {
+                router.push(`/approvals?task=${primary.taskId}`)
+              } else if (primary.href) {
+                router.push(primary.href)
+              }
+            }}
+            className="border-none cursor-pointer font-[inherit] transition-all hover:scale-105"
+            title={card.actions[0].label}
+          >
+            <Badge variant={card.badge}>{card.badgeText}</Badge>
+          </button>
+        ) : (
+          <Badge variant={card.badge}>{card.badgeText}</Badge>
+        )}
       </div>
 
       {/* Title + desc */}
@@ -87,46 +105,13 @@ export function KanbanCard({ card, visible, expanded, onToggle, onNavigate }: Ka
 
       {/* Expandable Details */}
       {expanded && card.details && (
-        <div className="mt-3 pt-3 border-t border-stroke">
+        <div className="mt-2 pt-2 border-t border-stroke">
           {card.details.map((d) => (
             <div key={d.label} className="flex justify-between py-[3px] text-12-regular">
               <span className="text-grey-08">{d.label}</span>
               <span style={{ color: d.color || 'var(--grey-06)' }}>{d.value}</span>
             </div>
           ))}
-
-          {/* Action buttons */}
-          {card.actions && card.actions.length > 0 && (
-            <div className="flex flex-wrap gap-[var(--space-1-5)] mt-3">
-              {card.actions.map((action) => (
-                <button
-                  key={action.label}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (action.type === 'approval') {
-                      router.push(`/approvals?task=${action.taskId}`)
-                    } else if (action.href) {
-                      router.push(action.href)
-                    }
-                  }}
-                  className={`inline-flex items-center gap-1 px-[var(--space-2)] py-[3px] rounded-md text-12-medium border-none cursor-pointer font-[inherit] transition-colors ${
-                    action.type === 'approval'
-                      ? 'bg-cyan-tint-08 text-l-cyan hover:bg-cyan-tint-12'
-                      : 'bg-selected text-grey-06 hover:text-grey-01 hover:bg-grey-12'
-                  }`}
-                >
-                  {action.type === 'approval' && (
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 8l4 4 6-6" />
-                    </svg>
-                  )}
-                  {action.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Client detail link */}
           <div className="mt-2 pt-2 border-t border-stroke">
             <button
               onClick={(e) => { e.stopPropagation(); onNavigate(card.clientId, `client/${card.clientId}`) }}
