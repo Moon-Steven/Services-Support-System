@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -127,7 +127,7 @@ function EntryRow({
 }
 
 /* ════════════════════════════════════════════════════ */
-export default function ClockConfigPage() {
+function ClockConfigPageContent() {
   const { client, setClient } = useClient()
   const searchParams = useSearchParams()
 
@@ -547,4 +547,8 @@ function EntryFormDialog({
       </div>
     </Dialog>
   )
+}
+
+export default function ClockConfigPage() {
+  return <Suspense><ClockConfigPageContent /></Suspense>
 }

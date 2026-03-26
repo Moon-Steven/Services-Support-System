@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -27,7 +27,7 @@ const typeVariant = (t: IOOrderType): 'cyan' | 'grey' | 'orange' | 'red' | 'dark
   return 'grey'
 }
 
-export default function IOOrdersPage() {
+function IOOrdersPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const presetClient = searchParams.get('client') || ''
@@ -261,3 +261,6 @@ export default function IOOrdersPage() {
   )
 }
 
+export default function IOOrdersPage() {
+  return <Suspense><IOOrdersPageContent /></Suspense>
+}

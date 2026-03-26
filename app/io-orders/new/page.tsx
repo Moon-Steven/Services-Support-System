@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -37,7 +37,7 @@ const relatedContent = [
   { value: 'renewal', label: '续约协议' },
 ]
 
-export default function NewIOOrderPage() {
+function NewIOOrderPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const presetClient = searchParams.get('client') || ''
@@ -539,4 +539,8 @@ function SummaryRow({ label, children }: { label: string; children: React.ReactN
       {children}
     </div>
   )
+}
+
+export default function NewIOOrderPage() {
+  return <Suspense><NewIOOrderPageContent /></Suspense>
 }
