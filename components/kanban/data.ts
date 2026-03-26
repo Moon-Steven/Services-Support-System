@@ -8,7 +8,6 @@ export const phases: Phase[] = [
   { id: 5, name: '终止/退款', owner: '明虎', opacity: 0.2 },
 ]
 
-/* 12 clients across 4 phases: 3+4+3+2 */
 export const kanbanCards: Record<number, CardData[]> = {
   1: [
     {
@@ -34,6 +33,15 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '产出', value: '合规报告' },
         { label: '审批', value: '行运 + HUI + 交付 + 销售' },
+      ],
+    },
+    {
+      id: 'c1-4', clientId: 'wavebone', clientName: 'Wavebone', clientInitial: 'W', grade: 'A',
+      badge: 'orange', badgeText: '进行中', title: 'TikTok 渠道合规补审', desc: '追加 TikTok 渠道，需补充合规材料',
+      details: [
+        { label: '原因', value: '新增投放渠道' },
+        { label: '渠道', value: 'TikTok Ads' },
+        { label: '预计完成', value: '2026-03-28' },
       ],
     },
   ],
@@ -69,6 +77,24 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '目标市场', value: '东南亚' },
         { label: '负责人', value: '郭晋光' },
+      ],
+    },
+    {
+      id: 'c2-5', clientId: 'shopmax', clientName: 'ShopMax', clientInitial: 'S', grade: 'B',
+      badge: 'grey', badgeText: '待处理', title: '投放素材与账户准备', desc: '合规审查通过后立即启动素材制作',
+      details: [
+        { label: '渠道', value: 'Meta Ads' },
+        { label: '素材类型', value: '爆品展示图 × 5 + 短视频 × 3' },
+        { label: '依赖', value: '合规审查通过', color: 'var(--orange)' },
+      ],
+    },
+    {
+      id: 'c2-6', clientId: 'medplus', clientName: 'MedPlus', clientInitial: 'M', grade: 'S',
+      badge: 'orange', badgeText: '审批中', title: '追加预算申请', desc: '测试效果良好，申请追加 $15,000',
+      details: [
+        { label: '当前预算', value: '$18,500' },
+        { label: '追加金额', value: '$15,000' },
+        { label: '审批状态', value: '财务审核中', color: 'var(--orange)' },
       ],
     },
   ],
@@ -115,6 +141,34 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '特殊', value: '高风险行业 · 医疗', color: 'var(--orange)' },
       ],
     },
+    {
+      id: 'c3-4', clientId: 'gameon', clientName: 'GameOn', clientInitial: 'G', grade: 'B',
+      badge: 'dark', badgeText: 'D2/7', title: 'TikTok 新渠道测试', desc: '',
+      metrics: [
+        { label: 'CPA', value: '$4.50' },
+        { label: 'ROAS', value: '110%' },
+      ],
+      progress: 28,
+      details: [
+        { label: '渠道', value: 'TikTok Ads（新增）' },
+        { label: '日均花费', value: '$800' },
+        { label: '说明', value: '续约期间测试新渠道可行性' },
+      ],
+    },
+    {
+      id: 'c3-5', clientId: 'novelking', clientName: 'NovelKing', clientInitial: 'N', grade: 'A',
+      badge: 'dark', badgeText: 'D5/14', title: '新素材 A/B 测试', desc: '',
+      metrics: [
+        { label: 'CPA', value: '$1.45' },
+        { label: 'ROAS', value: '320%', positive: true },
+      ],
+      progress: 36,
+      details: [
+        { label: '测试内容', value: '竖版短视频 vs 图文轮播' },
+        { label: '投手', value: '陶阳阳' },
+        { label: '说明', value: '续约后新素材效果验证' },
+      ],
+    },
   ],
   4: [
     {
@@ -136,6 +190,16 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '合作模式', value: '全托管' },
       ],
     },
+    {
+      id: 'c4-3', clientId: 'wavebone', clientName: 'Wavebone', clientInitial: 'W', grade: 'A',
+      badge: 'orange', badgeText: '待讨论', title: '续约方案预沟通', desc: '测试期 D8 表现优秀，提前启动续约沟通',
+      details: [
+        { label: 'CPA 达成', value: '$3.80（目标 $4.50）', color: 'var(--l-cyan)' },
+        { label: 'ROAS', value: '186%（目标 150%）', color: 'var(--l-cyan)' },
+        { label: '预计续约', value: '2026-04-02' },
+        { label: '拟定月预算', value: '$40,000' },
+      ],
+    },
   ],
   5: [
     {
@@ -147,6 +211,15 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '已消耗', value: '$4,500' },
         { label: '预估退款', value: '$8,750', color: 'var(--orange)' },
         { label: '审批进度', value: '财务确认中' },
+      ],
+    },
+    {
+      id: 'c5-2', clientId: 'brightpath', clientName: 'BrightPath', clientInitial: 'B', grade: 'C',
+      badge: 'grey', badgeText: '待处理', title: '账户资产回收', desc: '广告账户余额清算与 Pixel 权限回收',
+      details: [
+        { label: '待回收', value: 'Meta 广告账户 × 1' },
+        { label: 'Pixel', value: '权限移除待确认' },
+        { label: '负责人', value: '罗依桐' },
       ],
     },
   ],
