@@ -2,7 +2,7 @@
 
 > 一站式客户全生命周期管理与广告投放服务支持平台
 
-**线上预览:** [https://lanbow-app.vercel.app](https://lanbow-app.vercel.app)
+**线上预览:** [https://service-support-system.vercel.app](https://service-support-system.vercel.app)
 
 ---
 
@@ -105,4 +105,4 @@ npm start
 项目通过 GitHub 推送自动部署至 Vercel：
 
 - **仓库:** [github.com/Moon-Steven/Lanbow-App](https://github.com/Moon-Steven/Lanbow-App)
-- **线上地址:** [lanbow-app.vercel.app](https://lanbow-app.vercel.app)
+- **线上地址:** [service-support-system.vercel.app](https://service-support-system.vercel.app)
