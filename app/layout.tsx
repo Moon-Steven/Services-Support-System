@@ -29,11 +29,11 @@ export default function RootLayout({
           >
             跳至主内容
           </a>
-          <div className="flex min-h-screen">
+          <div className="flex min-h-screen overflow-x-hidden">
             <Sidebar />
-            <div className="flex flex-col flex-1 ml-[var(--width-sidebar)]">
+            <div className="flex flex-col flex-1 ml-[var(--width-sidebar)] max-w-[calc(100vw-var(--width-sidebar))]">
               <TopNav />
-              <main id="main-content" className="flex-1 px-5 py-4 overflow-y-auto">
+              <main id="main-content" className="flex-1 px-5 py-4 overflow-y-auto overflow-x-hidden">
                 {children}
               </main>
             </div>
