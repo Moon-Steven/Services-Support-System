@@ -76,7 +76,7 @@ export default function KanbanPage() {
   const totalTasks = Object.values(kanbanCards).flat().length
 
   return (
-    <div>
+    <div className="min-w-0">
       {/* ═══ Section 1: Pipeline Overview ═══ */}
       <section className="mb-4">
         {/* Section header row */}
@@ -154,7 +154,7 @@ export default function KanbanPage() {
           </span>
         </div>
 
-        <div className="flex items-start gap-3 overflow-x-auto pb-4">
+        <div className="grid grid-cols-5 gap-3 pb-4">
           {phases.map((phase) => (
             <KanbanColumn
               key={phase.id}
