@@ -18,7 +18,7 @@ export type CardData = {
   clientName: string
   clientInitial: string
   grade: string
-  badge: 'orange' | 'grey' | 'cyan' | 'dark'
+  badge: 'orange' | 'grey' | 'cyan' | 'dark' | 'red'
   badgeText: string
   title: string
   desc: string
