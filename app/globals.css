@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+:root {
+  /* ── Base Colors ── */
+  --l-cyan: #00B1A2;
+  --grey-01: #181818;
+  --grey-06: #626262;
+  --grey-08: #999999;
+  --grey-12: #EEEEEE;
+  --bg: #F3F3F3;
+  --white: #FFFFFF;
+  --selected: rgba(0, 0, 0, 0.02);
+  --stroke: rgba(0, 0, 0, 0.04);
+  --red: #FF2D55;
+  --orange: #FF9500;
+
+  /* ── Semantic Colors ── */
+  --color-success: var(--l-cyan);
+  --color-danger: var(--red);
+  --color-warning: var(--orange);
+  --color-info: var(--grey-06);
+
+  /* ── Overlay / Tint Colors (used for subtle backgrounds) ── */
+  --cyan-tint-08: rgba(0, 177, 162, 0.08);
+  --cyan-tint-10: rgba(0, 177, 162, 0.10);
+  --cyan-tint-12: rgba(0, 177, 162, 0.12);
+  --red-tint-04: rgba(255, 45, 85, 0.04);
+  --red-tint-08: rgba(255, 45, 85, 0.08);
+  --red-tint-15: rgba(255, 45, 85, 0.15);
+  --orange-tint-10: rgba(255, 149, 0, 0.10);
+  --overlay: rgba(0, 0, 0, 0.2);
+  --grid-line: rgba(0, 0, 0, 0.1);
+
+  /* ── Border Radius ── */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-round: 9999px;
+
+  /* ── Spacing Scale (4px base) ── */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  --space-2-5: 10px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ── Component Sizing ── */
+  --size-icon-xs: 12px;
+  --size-icon-sm: 16px;
+  --size-icon-md: 20px;
+  --size-icon-lg: 24px;
+  --size-icon-xl: 32px;
+  --size-avatar-sm: 24px;
+  --size-avatar-md: 32px;
+  --size-avatar-lg: 40px;
+  --size-avatar-xl: 48px;
+  --height-input: 40px;
+  --height-button: 36px;
+  --height-button-lg: 48px;
+  --height-row: 48px;
+  --height-header-row: 40px;
+  --height-topnav: 48px;
+  --width-sidebar: 220px;
+  --width-dialog: 520px;
+  --width-kanban-col: 320px;
+
+  /* ── Typography Scale ── */
+  --text-xs: 10px;
+  --text-sm: 12px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 20px;
+  --text-3xl: 24px;
+  --text-4xl: 32px;
+  --leading-tight: 1.2;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.6;
+}
+
+@theme {
+  /* ── Colors ── */
+  --color-l-cyan: var(--l-cyan);
+  --color-grey-01: var(--grey-01);
+  --color-grey-06: var(--grey-06);
+  --color-grey-08: var(--grey-08);
+  --color-grey-12: var(--grey-12);
+  --color-bg: var(--bg);
+  --color-white: var(--white);
+  --color-selected: var(--selected);
+  --color-stroke: var(--stroke);
+  --color-red: var(--red);
+  --color-orange: var(--orange);
+  --color-success: var(--color-success);
+  --color-danger: var(--color-danger);
+  --color-warning: var(--color-warning);
+  --color-info: var(--color-info);
+  --color-overlay: var(--overlay);
+  --color-cyan-tint-08: var(--cyan-tint-08);
+  --color-cyan-tint-10: var(--cyan-tint-10);
+  --color-cyan-tint-12: var(--cyan-tint-12);
+  --color-red-tint-04: var(--red-tint-04);
+  --color-red-tint-08: var(--red-tint-08);
+  --color-red-tint-15: var(--red-tint-15);
+  --color-orange-tint-10: var(--orange-tint-10);
+  --color-grid-line: var(--grid-line);
+
+  /* ── Border Radius ── */
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-round: var(--radius-round);
+
+  /* ── Spacing (registered for Tailwind utilities like p-*, m-*, gap-*) ── */
+  --spacing-0: var(--space-0);
+  --spacing-1: var(--space-1);
+  --spacing-1-5: var(--space-1-5);
+  --spacing-2: var(--space-2);
+  --spacing-2-5: var(--space-2-5);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+}
+
+/* Typography utilities */
+.text-24-bold {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+.text-20-bold {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+}
+
+.text-16-bold {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.text-14-bold {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+.text-12-bold {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+}
+
+.text-14-medium {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+.text-12-medium {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+.text-14-regular {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.text-12-regular {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+.text-10-regular {
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 400;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  color: var(--grey-01);
+  background-color: var(--bg);
+}

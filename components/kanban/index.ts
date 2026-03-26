@@ -1,0 +1,6 @@
+export { KanbanColumn } from './KanbanColumn'
+export { KanbanCard } from './KanbanCard'
+export { PipelineBar } from './PipelineBar'
+export { ClientChips } from './ClientChips'
+export { phases, kanbanCards, phaseCounts, gradeVariant } from './data'
+export type { CardData, Phase, CardDetail, CardMetric } from './types'
