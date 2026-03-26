@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { Badge } from '@/components/ui/Badge'
 import { Avatar } from '@/components/ui/Avatar'
 import type { CardData } from './types'
@@ -20,6 +21,7 @@ const gradeColorMap: Record<string, { bg: string; text: string }> = {
 }
 
 export function KanbanCard({ card, visible, expanded, onToggle, onNavigate }: KanbanCardProps) {
+  const router = useRouter()
   const opacity = visible ? (card.completed ? 0.5 : 1) : 0.15
   const gradeStyle = gradeColorMap[card.grade] || gradeColorMap.B
 
@@ -92,23 +94,46 @@ export function KanbanCard({ card, visible, expanded, onToggle, onNavigate }: Ka
               <span style={{ color: d.color || 'var(--grey-06)' }}>{d.value}</span>
             </div>
           ))}
-          {/* Cross-page links */}
-          <div className="flex gap-2 mt-2">
+
+          {/* Action buttons */}
+          {card.actions && card.actions.length > 0 && (
+            <div className="flex flex-wrap gap-[var(--space-1-5)] mt-3">
+              {card.actions.map((action) => (
+                <button
+                  key={action.label}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (action.type === 'approval') {
+                      router.push(`/approvals?task=${action.taskId}`)
+                    } else if (action.href) {
+                      router.push(action.href)
+                    }
+                  }}
+                  className={`inline-flex items-center gap-1 px-[var(--space-2)] py-[3px] rounded-md text-12-medium border-none cursor-pointer font-[inherit] transition-colors ${
+                    action.type === 'approval'
+                      ? 'bg-cyan-tint-08 text-l-cyan hover:bg-cyan-tint-12'
+                      : 'bg-selected text-grey-06 hover:text-grey-01 hover:bg-grey-12'
+                  }`}
+                >
+                  {action.type === 'approval' && (
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 8l4 4 6-6" />
+                    </svg>
+                  )}
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Client detail link */}
+          <div className="mt-2 pt-2 border-t border-stroke">
             <button
               onClick={(e) => { e.stopPropagation(); onNavigate(card.clientId, `client/${card.clientId}`) }}
-              className="bg-transparent border-none cursor-pointer text-12-regular text-l-cyan font-[inherit] font-medium"
+              className="bg-transparent border-none cursor-pointer text-12-regular text-grey-08 hover:text-l-cyan font-[inherit] transition-colors"
             >
-              客户详情
+              查看客户详情 →
             </button>
-            {(['dashboard', 'assets', 'changes'] as const).map((page) => (
-              <button
-                key={page}
-                onClick={(e) => { e.stopPropagation(); onNavigate(card.clientId, page) }}
-                className="bg-transparent border-none cursor-pointer text-12-regular text-l-cyan font-[inherit]"
-              >
-                {page === 'dashboard' ? '投放数据' : page === 'assets' ? '资产管理' : '变更记录'}
-              </button>
-            ))}
           </div>
         </div>
       )}

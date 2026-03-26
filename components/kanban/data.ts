@@ -18,6 +18,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '系统', value: '离线工单 · 支持系统' },
         { label: '销售', value: '王斯琼' },
       ],
+      actions: [
+        { label: '审批合规', type: 'approval', taskId: 'onboard-shopmax-compliance' },
+        { label: 'IO 单', type: 'link', href: '/io-orders?client=shopmax' },
+      ],
     },
     {
       id: 'c1-2', clientId: 'brightpath', clientName: 'BrightPath', clientInitial: 'B', grade: 'C',
@@ -25,6 +29,9 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '产出', value: '客户需求文档' },
         { label: '负责人', value: '王斯琼' },
+      ],
+      actions: [
+        { label: '发起入驻', type: 'approval', taskId: 'onboard-brightpath-contact' },
       ],
     },
     {
@@ -34,6 +41,9 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '产出', value: '合规报告' },
         { label: '审批', value: '行运 + HUI + 交付 + 销售' },
       ],
+      actions: [
+        { label: '审批资质', type: 'approval', taskId: 'onboard-luxevibe-compliance' },
+      ],
     },
     {
       id: 'c1-4', clientId: 'wavebone', clientName: 'Wavebone', clientInitial: 'W', grade: 'A',
@@ -42,6 +52,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '原因', value: '新增投放渠道' },
         { label: '渠道', value: 'TikTok Ads' },
         { label: '预计完成', value: '2026-03-28' },
+      ],
+      actions: [
+        { label: '提交合规材料', type: 'approval', taskId: 'onboard-wavebone-compliance' },
+        { label: '查看投放', type: 'link', href: '/dashboard?client=wavebone' },
       ],
     },
   ],
@@ -54,6 +68,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '系统', value: '430 · 交付系统/HUI' },
         { label: '特殊要求', value: '金融牌照验证', color: 'var(--red)' },
       ],
+      actions: [
+        { label: '审批 IO 单', type: 'approval', taskId: 'io-IO-2026-008-finance_review' },
+        { label: '查看 IO 单', type: 'link', href: '/io-orders?client=fintech' },
+      ],
     },
     {
       id: 'c2-2', clientId: 'readnow', clientName: 'ReadNow', clientInitial: 'R', grade: 'A',
@@ -61,6 +79,9 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '渠道', value: 'Meta + TikTok' },
         { label: '预算', value: '$30,000' },
+      ],
+      actions: [
+        { label: '资产确认', type: 'link', href: '/assets?client=readnow' },
       ],
     },
     {
@@ -70,6 +91,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '预算', value: '$80,000' },
         { label: '测试期', value: '14 天' },
       ],
+      actions: [
+        { label: '审批打款', type: 'approval', taskId: 'io-IO-2026-006-finance_review' },
+        { label: '查看 IO 单', type: 'link', href: '/io-orders?client=payeasy' },
+      ],
     },
     {
       id: 'c2-4', clientId: 'travelgo', clientName: 'TravelGo', clientInitial: 'T', grade: 'B',
@@ -77,6 +102,9 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '目标市场', value: '东南亚' },
         { label: '负责人', value: '郭晋光' },
+      ],
+      actions: [
+        { label: '投放提案', type: 'link', href: '/proposal?client=travelgo' },
       ],
     },
     {
@@ -87,6 +115,9 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '素材类型', value: '爆品展示图 × 5 + 短视频 × 3' },
         { label: '依赖', value: '合规审查通过', color: 'var(--orange)' },
       ],
+      actions: [
+        { label: '资产管理', type: 'link', href: '/assets?client=shopmax' },
+      ],
     },
     {
       id: 'c2-6', clientId: 'medplus', clientName: 'MedPlus', clientInitial: 'M', grade: 'S',
@@ -95,6 +126,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '当前预算', value: '$18,500' },
         { label: '追加金额', value: '$15,000' },
         { label: '审批状态', value: '财务审核中', color: 'var(--orange)' },
+      ],
+      actions: [
+        { label: '审批追加', type: 'approval', taskId: 'io-IO-2026-010-finance_review' },
+        { label: '查看投放', type: 'link', href: '/dashboard?client=medplus' },
       ],
     },
   ],
@@ -113,6 +148,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '投手', value: '陶阳阳' },
         { label: '下次复盘', value: '2026-03-28' },
       ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=wavebone' },
+        { label: 'Clock', type: 'link', href: '/clock-config?client=wavebone' },
+      ],
     },
     {
       id: 'c3-2', clientId: 'quickbuy', clientName: 'QuickBuy', clientInitial: 'Q', grade: 'B',
@@ -125,6 +164,10 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '日均花费', value: '$1,200' },
         { label: '累计安装', value: '680' },
+      ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=quickbuy' },
+        { label: 'Clock', type: 'link', href: '/clock-config?client=quickbuy' },
       ],
     },
     {
@@ -140,6 +183,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '累计安装', value: '3,750' },
         { label: '特殊', value: '高风险行业 · 医疗', color: 'var(--orange)' },
       ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=medplus' },
+        { label: '学习笔记', type: 'link', href: '/learning-notes?client=medplus' },
+      ],
     },
     {
       id: 'c3-4', clientId: 'gameon', clientName: 'GameOn', clientInitial: 'G', grade: 'B',
@@ -153,6 +200,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '渠道', value: 'TikTok Ads（新增）' },
         { label: '日均花费', value: '$800' },
         { label: '说明', value: '续约期间测试新渠道可行性' },
+      ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=gameon' },
+        { label: 'Clock', type: 'link', href: '/clock-config?client=gameon' },
       ],
     },
     {
@@ -168,6 +219,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '投手', value: '陶阳阳' },
         { label: '说明', value: '续约后新素材效果验证' },
       ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=novelking' },
+        { label: '学习笔记', type: 'link', href: '/learning-notes?client=novelking' },
+      ],
     },
   ],
   4: [
@@ -180,6 +235,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '客户意向', value: '倾向续约', color: 'var(--l-cyan)' },
         { label: '决策日期', value: '2026-03-28' },
       ],
+      actions: [
+        { label: '续约审批', type: 'approval', taskId: 'onboard-gameon-renewal' },
+        { label: '评级变更', type: 'link', href: '/client/gameon' },
+      ],
     },
     {
       id: 'c4-2', clientId: 'novelking', clientName: 'NovelKing', clientInitial: 'N', grade: 'A',
@@ -188,6 +247,10 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '月预算', value: '$50,000' },
         { label: '合作模式', value: '全托管' },
+      ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=novelking' },
+        { label: 'IO 单', type: 'link', href: '/io-orders?client=novelking' },
       ],
     },
     {
@@ -198,6 +261,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: 'ROAS', value: '186%（目标 150%）', color: 'var(--l-cyan)' },
         { label: '预计续约', value: '2026-04-02' },
         { label: '拟定月预算', value: '$40,000' },
+      ],
+      actions: [
+        { label: '投放提案', type: 'link', href: '/proposal?client=wavebone' },
+        { label: '评级变更', type: 'link', href: '/client/wavebone' },
       ],
     },
   ],
@@ -212,6 +279,9 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '预估退款', value: '$8,750', color: 'var(--orange)' },
         { label: '审批进度', value: '财务确认中' },
       ],
+      actions: [
+        { label: '退款审批', type: 'approval', taskId: 'io-IO-2026-009-finance_review' },
+      ],
     },
     {
       id: 'c5-2', clientId: 'brightpath', clientName: 'BrightPath', clientInitial: 'B', grade: 'C',
@@ -220,6 +290,9 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '待回收', value: 'Meta 广告账户 × 1' },
         { label: 'Pixel', value: '权限移除待确认' },
         { label: '负责人', value: '罗依桐' },
+      ],
+      actions: [
+        { label: '资产管理', type: 'link', href: '/assets?client=brightpath' },
       ],
     },
   ],

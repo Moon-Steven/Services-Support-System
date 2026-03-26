@@ -25,7 +25,7 @@ export function KanbanColumn({
 }: KanbanColumnProps) {
   return (
     <div
-      className="min-w-0 overflow-hidden transition-opacity duration-250"
+      className="min-w-0 transition-opacity duration-250"
       style={{
         opacity: dimmed ? 0.15 : 1,
         pointerEvents: dimmed ? 'none' : 'auto',

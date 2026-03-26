@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useMemo, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -233,7 +233,16 @@ function HorizontalSteps({ steps }: { steps: ApprovalStep[] }) {
 
 /* ════════════════════════════════════════════════════ */
 export default function ApprovalsPage() {
+  return (
+    <Suspense>
+      <ApprovalsContent />
+    </Suspense>
+  )
+}
+
+function ApprovalsContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [roleFilter, setRoleFilter] = useState<string>('全部')
   const [typeFilter, setTypeFilter] = useState<string>('全部')
   const [selectedTask, setSelectedTask] = useState<ApprovalTask | null>(null)
@@ -251,6 +260,22 @@ export default function ApprovalsPage() {
     gradeChangeRequests.forEach((gc) => tasks.push(...deriveGradeChangeTasks(gc)))
     return tasks
   }, [])
+
+  /* Auto-open task from URL param (e.g., /approvals?task=onboard-shopmax-compliance) */
+  useEffect(() => {
+    const taskId = searchParams.get('task')
+    if (taskId && allTasks.length > 0 && !selectedTask) {
+      const match = allTasks.find((t) => t.id === taskId)
+      if (match) {
+        setSelectedTask(match)
+        setMode('approve')
+        setComment('')
+        setUploadedFiles([])
+        setShowChain(false)
+        setActionDone(null)
+      }
+    }
+  }, [searchParams, allTasks]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = useMemo(() => {
     return allTasks.filter((t) => {

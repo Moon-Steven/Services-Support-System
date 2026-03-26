@@ -12,6 +12,15 @@ export type CardMetric = {
   positive?: boolean
 }
 
+export type CardAction = {
+  label: string
+  type: 'approval' | 'link'
+  /** For approval type: the task ID to open in approvals page */
+  taskId?: string
+  /** For link type: the target path */
+  href?: string
+}
+
 export type CardData = {
   id: string
   clientId: string
@@ -26,6 +35,7 @@ export type CardData = {
   details?: CardDetail[]
   metrics?: CardMetric[]
   progress?: number
+  actions?: CardAction[]
 }
 
 export type Phase = {
