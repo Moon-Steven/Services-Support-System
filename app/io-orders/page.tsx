@@ -16,14 +16,15 @@ const statusVariant = (s: IOOrderStatus): 'cyan' | 'grey' | 'orange' | 'red' | '
   if (s === '投放中') return 'cyan'
   if (s === '已完成') return 'grey'
   if (s === '审批中' || s === '待打款') return 'orange'
-  if (s.includes('终止') || s.includes('退款')) return 'red'
+  if (s === '退款中') return 'orange'
+  if (s === '已终止' || s === '已退款') return 'red'
   return 'dark'
 }
 
 const typeVariant = (t: IOOrderType): 'cyan' | 'grey' | 'orange' | 'red' | 'dark' => {
   if (t === '新建投放') return 'cyan'
   if (t === '变更需求') return 'orange'
-  if (t === '终止退款') return 'red'
+  if (t === '终止合作') return 'dark'
   return 'grey'
 }
 
@@ -62,7 +63,7 @@ function IOOrdersPageContent() {
         <div>
           <h1 className="text-24-bold text-grey-01">IO 单管理</h1>
           <p className="text-14-regular text-grey-08 mt-[var(--space-1)]">
-            管理所有客户的投放订单、变更需求与终止退款
+            管理所有客户的投放订单、变更需求与终止合作
           </p>
         </div>
         <Button onClick={() => router.push(presetClient ? `/io-orders/new?client=${presetClient}` : '/io-orders/new')}>+ 新建 IO 单</Button>
@@ -116,7 +117,7 @@ function IOOrdersPageContent() {
           ))}
         </div>
         <div className="flex gap-[var(--space-2)]">
-          {['全部', '新建投放', '变更需求', '终止退款'].map((t) => (
+          {['全部', '新建投放', '变更需求', '终止合作'].map((t) => (
             <button
               key={t}
               onClick={() => setFilterType(t)}
@@ -270,9 +271,9 @@ function IOOrdersPageContent() {
             </div>
 
             {/* Termination Section */}
-            {selectedOrder.type === '终止退款' && (
+            {selectedOrder.type === '终止合作' && (
               <div className="bg-red-tint-08 rounded-lg p-[var(--space-3)]">
-                <div className="text-12-bold text-red mb-[var(--space-2)]">终止退款信息</div>
+                <div className="text-12-bold text-red mb-[var(--space-2)]">终止合作信息</div>
                 <div className="grid grid-cols-2 gap-[var(--space-2)]">
                   <div>
                     <div className="text-10-regular text-grey-08">终止类型</div>

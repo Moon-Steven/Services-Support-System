@@ -193,13 +193,13 @@ function NewIOOrderPageContent() {
             {/* IO Type */}
             <FieldLabel label="IO 类型" required className="mb-[var(--space-4)]">
               <div className="flex gap-[var(--space-2)]">
-                {(['新建投放', '变更需求', '终止退款'] as IOOrderType[]).map((t) => (
+                {(['新建投放', '变更需求', '终止合作'] as IOOrderType[]).map((t) => (
                   <button
                     key={t}
                     onClick={() => setType(t)}
                     className={`flex-1 py-[9px] rounded-lg text-12-medium border cursor-pointer transition-all font-[inherit] ${
                       type === t
-                        ? t === '终止退款'
+                        ? t === '终止合作'
                           ? 'bg-red text-white border-red'
                           : 'bg-grey-01 text-white border-grey-01'
                         : 'bg-white text-grey-06 border-stroke hover:border-grey-06'
@@ -331,9 +331,9 @@ function NewIOOrderPageContent() {
           </Card>
 
           {/* Termination Warning */}
-          {type === '终止退款' && (
+          {type === '终止合作' && (
             <div className="bg-red-tint-08 rounded-xl p-[var(--space-4)] border border-red/20">
-              <div className="text-12-bold text-red mb-[var(--space-1)]">终止退款说明</div>
+              <div className="text-12-bold text-red mb-[var(--space-1)]">终止合作说明</div>
               <p className="text-12-regular text-grey-06 leading-relaxed">
                 提交后将触发终止流程：销售确认 → 运营暂停投放 → 交付资产交割 → 财务核算退款。
                 退款金额将由财务根据实际消耗和服务费核算确定。
@@ -490,7 +490,7 @@ function NewIOOrderPageContent() {
                   '预算金额需与框架协议约定一致',
                   '投放周期建议不少于 7 天',
                   '审批通过后将自动通知财务确认打款',
-                  '终止退款类型需销售总监额外审批',
+                  '终止合作类型需销售总监额外审批',
                 ].map((tip) => (
                   <div key={tip} className="flex items-start gap-[var(--space-1)]">
                     <span className="text-grey-08 mt-[2px] shrink-0">·</span>

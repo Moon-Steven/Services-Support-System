@@ -586,8 +586,8 @@ export const clients: Client[] = [
 
 /* ── IO Order Types ── */
 
-export type IOOrderStatus = '审批中' | '待打款' | '已打款' | '投放中' | '已完成' | '终止退款中' | '已终止' | '已退款'
-export type IOOrderType = '新建投放' | '变更需求' | '终止退款'
+export type IOOrderStatus = '审批中' | '待打款' | '已打款' | '投放中' | '已完成' | '退款中' | '已终止' | '已退款'
+export type IOOrderType = '新建投放' | '变更需求' | '终止合作'
 
 export type IOOrder = {
   id: string
@@ -788,8 +788,8 @@ export const ioOrders: IOOrder[] = [
   },
   /* ── New IO orders for previously missing clients ── */
   {
-    id: 'IO-2026-008', clientId: 'brightpath', clientName: 'BrightPath', type: '终止退款',
-    status: '终止退款中', amount: 15000, period: '2026-02-20 ~ 2026-03-20', channels: ['Meta'],
+    id: 'IO-2026-008', clientId: 'brightpath', clientName: 'BrightPath', type: '终止合作',
+    status: '退款中', amount: 15000, period: '2026-02-20 ~ 2026-03-20', channels: ['Meta'],
     createdAt: '2026-03-22', createdBy: '王斯琼',
     objective: '品牌曝光', description: '教育行业推广，因效果不达标终止', ownerName: '陶阳阳', ownerRole: '投手', startDate: '2026-02-20', endDate: '2026-03-20', duration: 28, relatedDoc: '框架协议',
     terminationType: '效果不达标', terminationReason: '测试期 CPA 持续高于目标值 40%，客户沟通后决定终止',
