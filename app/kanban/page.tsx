@@ -357,12 +357,23 @@ export default function KanbanPage() {
                                   router.push(action.href)
                                 }
                               }}
-                              className="inline-flex items-center gap-1 px-[var(--space-2)] py-1 rounded-md text-10-regular bg-selected text-grey-06 hover:text-grey-01 hover:bg-grey-12 border-none cursor-pointer font-[inherit] transition-colors"
+                              className={`inline-flex items-center gap-1 px-[var(--space-2)] py-1.5 rounded-md text-12-bold cursor-pointer font-[inherit] transition-colors ${
+                                action.type === 'approval'
+                                  ? 'bg-grey-01 text-white hover:opacity-80 border-none'
+                                  : 'bg-white text-grey-01 border border-stroke hover:bg-selected hover:border-grey-06 shadow-sm'
+                              }`}
                             >
+                              {action.type === 'approval' && (
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                  <path d="M4 8l3 3 5-6" />
+                                </svg>
+                              )}
                               {action.label}
-                              <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                                <path d="M6 4l4 4-4 4" />
-                              </svg>
+                              {action.type === 'link' && (
+                                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                                  <path d="M6 4l4 4-4 4" />
+                                </svg>
+                              )}
                             </button>
                           ))}
                         </div>
@@ -385,9 +396,12 @@ export default function KanbanPage() {
             {/* ── Quick Navigate to Client ── */}
             <button
               onClick={() => navigateToClient(drawerClientId!, `client/${drawerClientId}`)}
-              className="w-full py-[var(--space-2)] rounded-lg text-14-medium text-l-cyan bg-cyan-tint-08 hover:bg-cyan-tint-12 border-none cursor-pointer font-[inherit] transition-colors"
+              className="w-full py-[var(--space-3)] rounded-lg text-14-bold text-l-cyan bg-cyan-tint-08 hover:bg-cyan-tint-12 border border-l-cyan/20 cursor-pointer font-[inherit] transition-colors flex items-center justify-center gap-2"
             >
               查看客户详情
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 4l4 4-4 4" />
+              </svg>
             </button>
           </div>
         )}
@@ -504,40 +518,39 @@ function SingleCardDrawer({
               <button
                 key={action.label}
                 onClick={() => action.href && router.push(action.href)}
-                className="inline-flex items-center gap-1 px-[var(--space-3)] py-[var(--space-1-5)] rounded-md text-12-medium bg-selected text-grey-06 hover:text-grey-01 hover:bg-grey-12 border-none cursor-pointer font-[inherit] transition-colors"
+                className="inline-flex items-center gap-1.5 px-[var(--space-3)] py-[var(--space-2)] rounded-lg text-12-bold border border-stroke bg-white text-grey-01 hover:bg-selected hover:border-grey-06 cursor-pointer font-[inherit] transition-colors shadow-sm"
               >
-                {action.label}
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 4l4 4-4 4" />
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 3h6a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z" />
+                  <path d="M8 6v4M6 8h4" />
                 </svg>
+                {action.label}
               </button>
             ))}
-          <button
-            onClick={() => onNavigate(card.clientId, `client/${card.clientId}`)}
-            className="inline-flex items-center gap-1 px-[var(--space-3)] py-[var(--space-1-5)] rounded-md text-12-medium bg-selected text-grey-06 hover:text-grey-01 hover:bg-grey-12 border-none cursor-pointer font-[inherit] transition-colors"
-          >
-            客户详情
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 4l4 4-4 4" />
-            </svg>
-          </button>
         </div>
       )}
 
       {/* Approval Action */}
       {hasApprovalAction && !drawerAction && (
-        <div className="border-t border-stroke pt-[var(--space-4)]">
-          <div className="text-12-bold text-grey-01 mb-[var(--space-2)]">审批操作</div>
+        <div className="bg-bg rounded-xl p-[var(--space-4)] border border-stroke">
+          <div className="text-14-bold text-grey-01 mb-[var(--space-3)] flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-[24px] h-[24px] rounded-full bg-grey-01 text-white">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M4 8h8M8 4v8" />
+              </svg>
+            </span>
+            审批操作
+          </div>
           <textarea
             value={drawerComment}
             onChange={(e) => setDrawerComment(e.target.value)}
             placeholder="输入审批备注（驳回时必填）..."
             rows={3}
-            className="w-full rounded-lg border border-stroke px-[var(--space-3)] py-[var(--space-2)] text-14-regular text-grey-01 resize-none outline-none focus:border-l-cyan transition-colors font-[inherit]"
+            className="w-full rounded-lg border border-stroke bg-white px-[var(--space-3)] py-[var(--space-2)] text-14-regular text-grey-01 resize-none outline-none focus:border-l-cyan transition-colors font-[inherit]"
           />
           <div className="flex gap-[var(--space-2)] mt-[var(--space-3)]">
-            <Button onClick={() => onAction('approve')} className="flex-1">通过</Button>
-            <Button variant="destructive" onClick={() => onAction('reject')} className="flex-1">驳回</Button>
+            <Button onClick={() => onAction('approve')} className="flex-1 !h-[40px] !text-14-bold">✓ 通过审批</Button>
+            <Button variant="destructive" onClick={() => onAction('reject')} className="flex-1 !h-[40px] !text-14-bold">✕ 驳回</Button>
           </div>
         </div>
       )}
