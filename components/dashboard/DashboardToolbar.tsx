@@ -20,10 +20,10 @@ export function DashboardToolbar({
 }: DashboardToolbarProps) {
   return (
     <div className="flex items-center justify-between">
-      <div>
-        <p className="text-12-regular text-grey-08">
-          客户：{clientName} · 测试期第 8 天
-        </p>
+      <div className="flex items-center gap-[var(--space-3)]">
+        <span className="text-14-medium text-grey-01">{clientName}</span>
+        <span className="text-12-regular text-grey-08">·</span>
+        <span className="text-12-regular text-grey-08">测试期第 8 天</span>
       </div>
       <div className="flex items-center gap-[var(--space-3)]">
         {/* Daily/Weekly toggle */}
