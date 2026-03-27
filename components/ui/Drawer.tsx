@@ -6,11 +6,13 @@ interface DrawerProps {
   open: boolean
   onClose: () => void
   title?: string
+  /** Custom header content (replaces default title) */
+  headerContent?: ReactNode
   width?: number
   children: ReactNode
 }
 
-export function Drawer({ open, onClose, title, width = 420, children }: DrawerProps) {
+export function Drawer({ open, onClose, title, headerContent, width = 420, children }: DrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -51,18 +53,22 @@ export function Drawer({ open, onClose, title, width = 420, children }: DrawerPr
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-[var(--space-5)] py-[var(--space-4)] border-b border-stroke shrink-0">
+        <div className="px-[var(--space-5)] py-[var(--space-4)] border-b border-stroke shrink-0">
           <div className="flex items-center gap-[var(--space-2)]">
             <button
               onClick={onClose}
               aria-label="关闭"
-              className="flex items-center justify-center w-7 h-7 rounded-md text-grey-06 hover:text-grey-01 hover:bg-selected transition-colors border-none bg-transparent cursor-pointer"
+              className="flex items-center justify-center w-7 h-7 rounded-md text-grey-06 hover:text-grey-01 hover:bg-selected transition-colors border-none bg-transparent cursor-pointer shrink-0"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10 4l-4 4 4 4" />
               </svg>
             </button>
-            {title && <h2 className="text-14-bold">{title}</h2>}
+            {headerContent ? (
+              <div className="flex-1 min-w-0">{headerContent}</div>
+            ) : (
+              title && <h2 className="text-14-bold">{title}</h2>
+            )}
           </div>
         </div>
 

@@ -17,7 +17,10 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '产出', value: '合规资料 + 评估结果' },
         { label: '系统', value: '离线工单 · 支持系统' },
-        { label: '销售', value: '王斯琼' },
+      ],
+      approvalSteps: [
+        { role: '销售提交', person: '王斯琼', status: 'done', date: '2026-03-20' },
+        { role: '行业运营审核', person: '郭晋光', status: 'current' },
       ],
       actions: [
         { label: '审批合规', type: 'approval', taskId: 'onboard-shopmax-compliance' },
@@ -40,7 +43,10 @@ export const kanbanCards: Record<number, CardData[]> = {
       badge: 'grey', badgeText: '待处理', title: '初次客户沟通', desc: '教育行业客户首次接触',
       details: [
         { label: '产出', value: '客户需求文档' },
-        { label: '负责人', value: '王斯琼' },
+      ],
+      approvalSteps: [
+        { role: '销售提交', person: '王斯琼', status: 'current' },
+        { role: '行业运营审核', person: '郭晋光', status: 'pending' },
       ],
       actions: [
         { label: '发起入驻', type: 'approval', taskId: 'onboard-brightpath-contact' },
@@ -51,7 +57,11 @@ export const kanbanCards: Record<number, CardData[]> = {
       badge: 'orange', badgeText: '进行中', title: '资质审查', desc: '电商品牌资质审查中',
       details: [
         { label: '产出', value: '合规报告' },
-        { label: '审批', value: '行运 + HUI + 交付 + 销售' },
+      ],
+      approvalSteps: [
+        { role: '销售提交', person: '王斯琼', status: 'done', date: '2026-03-18' },
+        { role: '行业运营审核', person: '郭晋光', status: 'current' },
+        { role: '交付确认', person: '明虎', status: 'pending' },
       ],
       actions: [
         { label: '审批资质', type: 'approval', taskId: 'onboard-luxevibe-compliance' },
@@ -64,6 +74,10 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '原因', value: '新增投放渠道' },
         { label: '渠道', value: 'TikTok Ads' },
         { label: '预计完成', value: '2026-03-28' },
+      ],
+      approvalSteps: [
+        { role: '销售提交', person: '王斯琼', status: 'done', date: '2026-03-22' },
+        { role: '行业运营审核', person: '郭晋光', status: 'current' },
       ],
       actions: [
         { label: '提交合规材料', type: 'approval', taskId: 'onboard-wavebone-compliance' },
@@ -90,6 +104,11 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '产出', value: '可执行标准' },
         { label: '系统', value: '430 · 交付系统/HUI' },
         { label: '特殊要求', value: '金融牌照验证', color: 'var(--red)' },
+      ],
+      approvalSteps: [
+        { role: '销售提交', person: '王斯琼', status: 'done', date: '2026-03-19' },
+        { role: '行业运营审核', person: '郭晋光', status: 'done', date: '2026-03-21', comment: '金融行业需额外牌照验证' },
+        { role: '财务审核', person: '明虎', status: 'current' },
       ],
       actions: [
         { label: '审批 IO 单', type: 'approval', taskId: 'io-IO-2026-008-finance_review' },
@@ -125,6 +144,11 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '预算', value: '$80,000' },
         { label: '测试期', value: '14 天' },
       ],
+      approvalSteps: [
+        { role: '销售提交', person: '王斯琼', status: 'done', date: '2026-03-18' },
+        { role: '行业运营审核', person: '郭晋光', status: 'done', date: '2026-03-20' },
+        { role: '财务打款', person: '明虎', status: 'current' },
+      ],
       actions: [
         { label: '审批打款', type: 'approval', taskId: 'io-IO-2026-006-finance_review' },
         { label: '查看 IO 单', type: 'link', href: '/io-orders?client=payeasy' },
@@ -159,7 +183,11 @@ export const kanbanCards: Record<number, CardData[]> = {
       details: [
         { label: '当前预算', value: '$18,500' },
         { label: '追加金额', value: '$15,000' },
-        { label: '审批状态', value: '财务审核中', color: 'var(--orange)' },
+      ],
+      approvalSteps: [
+        { role: '投手发起', person: '罗依桐', status: 'done', date: '2026-03-24' },
+        { role: '行业运营审核', person: '郭晋光', status: 'done', date: '2026-03-25' },
+        { role: '财务审核', person: '明虎', status: 'current' },
       ],
       actions: [
         { label: '审批追加', type: 'approval', taskId: 'io-IO-2026-010-finance_review' },
@@ -198,8 +226,10 @@ export const kanbanCards: Record<number, CardData[]> = {
       ],
       details: [
         { label: '变更类型', value: '预算调整' },
-        { label: '发起人', value: '罗依桐' },
-        { label: '审批进度', value: '行运审核中', color: 'var(--orange)' },
+      ],
+      approvalSteps: [
+        { role: '投手发起', person: '罗依桐', status: 'done', date: '2026-03-25' },
+        { role: '行业运营审核', person: '郭晋光', status: 'current' },
       ],
       actions: [
         { label: '审批变更', type: 'approval', taskId: 'change-wavebone-budget-003' },
@@ -317,6 +347,11 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '客户意向', value: '倾向续约', color: 'var(--l-cyan)' },
         { label: '决策日期', value: '2026-03-28' },
       ],
+      approvalSteps: [
+        { role: '投手评估', person: '陶阳阳', status: 'done', date: '2026-03-23', comment: '数据基本达标，建议续约' },
+        { role: '行业运营审核', person: '郭晋光', status: 'done', date: '2026-03-24' },
+        { role: '销售确认', person: '王斯琼', status: 'current' },
+      ],
       actions: [
         { label: '续约审批', type: 'approval', taskId: 'onboard-gameon-renewal' },
         { label: '评级变更', type: 'link', href: '/client/gameon' },
@@ -333,8 +368,10 @@ export const kanbanCards: Record<number, CardData[]> = {
       ],
       details: [
         { label: '变更类型', value: '素材策略' },
-        { label: '发起人', value: '郭晋光' },
-        { label: '审批进度', value: '运营审核中', color: 'var(--orange)' },
+      ],
+      approvalSteps: [
+        { role: '行业运营发起', person: '郭晋光', status: 'done', date: '2026-03-24' },
+        { role: '投手确认', person: '陶阳阳', status: 'current' },
       ],
       actions: [
         { label: '审批变更', type: 'approval', taskId: 'change-gameon-creative-001' },
@@ -396,7 +433,11 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '充值总额', value: '$15,000' },
         { label: '已消耗', value: '$4,500' },
         { label: '预估退款', value: '$8,750', color: 'var(--orange)' },
-        { label: '审批进度', value: '财务确认中' },
+      ],
+      approvalSteps: [
+        { role: '销售发起', person: '王斯琼', status: 'done', date: '2026-03-24' },
+        { role: '行业运营确认', person: '郭晋光', status: 'done', date: '2026-03-25' },
+        { role: '财务退款', person: '明虎', status: 'current' },
       ],
       actions: [
         { label: '退款审批', type: 'approval', taskId: 'io-IO-2026-009-finance_review' },

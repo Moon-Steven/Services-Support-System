@@ -13,8 +13,6 @@ import {
   CreativeTop,
   StrategyTimeline,
   TestProgress,
-  SpendProgress,
-  RoiTrend,
 } from '@/components/dashboard'
 import type { Campaign, Creative, StrategyNote } from '@/components/dashboard'
 
@@ -73,7 +71,8 @@ function DashboardInner() {
   const clientName = client?.name || 'Wavebone'
 
   return (
-    <div>
+    <div className="flex flex-col gap-[var(--space-6)]">
+      {/* ═══ Toolbar (no title) ═══ */}
       <DashboardToolbar
         clientName={clientName}
         view={view}
@@ -82,36 +81,34 @@ function DashboardInner() {
         onPlatformChange={setPlatform}
       />
 
-      <KpiCards kpis={kpis} />
-
-      {/* Charts Row: Test Progress + Spend + ROI */}
-      <div className="grid grid-cols-[1fr_2fr_2fr] gap-[var(--space-5)] mb-[var(--space-6)]">
+      {/* ═══ Section 1: 核心指标 + 投放周期进度 ═══ */}
+      <section>
+        <KpiCards kpis={kpis} />
         <TestProgress />
-        <SpendProgress
-          totalSpend={248900}
-          budget={500000}
-          dailySpend={[32000, 35000, 38000, 41000, 37000, 42000, 39500]}
-          labels={['Apr 11', 'Apr 12', 'Apr 13', 'Apr 14', 'Apr 15', 'Apr 16', 'Apr 17']}
-          daysElapsed={7}
-          totalDays={14}
-        />
-        <RoiTrend
-          currentRoi={1.85}
-          roiChange={0.12}
-          weeklyRoi={[1.2, 1.35, 1.45, 1.58, 1.65, 1.73, 1.85]}
-          labels={['Feb 18', 'Feb 25', 'Mar 4', 'Mar 11', 'Mar 18', 'Mar 25', 'Apr 1']}
-        />
-      </div>
+      </section>
 
-      {/* Bottom Row: Table + Sidebar */}
-      <div className="grid grid-cols-[2fr_1fr] gap-[var(--space-5)]">
-        <CampaignTable campaigns={campaigns} />
-
-        <div className="flex flex-col gap-[var(--space-5)]">
-          <CreativeTop creatives={creatives} />
-          <StrategyTimeline notes={strategyNotes} />
+      {/* ═══ Section 2: 投放数据趋势 ═══ */}
+      <section>
+        <h2 className="text-16-bold text-grey-01 mb-[var(--space-3)]">投放数据趋势</h2>
+        <div className="grid grid-cols-2 gap-[var(--space-5)]">
+          <SpendInstallChart days={days} spend={spend} installs={installs} />
+          <CpaRoasChart days={days} cpaData={cpaData} roasData={roasData} />
         </div>
-      </div>
+      </section>
+
+      {/* ═══ Section 3: 广告系列明细 ═══ */}
+      <section>
+        <CampaignTable campaigns={campaigns} />
+      </section>
+
+      {/* ═══ Section 4: 投放策略 & 素材 ═══ */}
+      <section>
+        <h2 className="text-16-bold text-grey-01 mb-[var(--space-3)]">投放策略 & 素材</h2>
+        <div className="grid grid-cols-2 gap-[var(--space-5)]">
+          <StrategyTimeline notes={strategyNotes} />
+          <CreativeTop creatives={creatives} />
+        </div>
+      </section>
     </div>
   )
 }

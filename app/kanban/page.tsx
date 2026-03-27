@@ -239,162 +239,37 @@ export default function KanbanPage() {
       <Drawer
         open={!!drawerState}
         onClose={closeDrawer}
-        title="任务清单"
+        headerContent={drawerState ? (
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-[var(--space-2)]">
+              <Avatar name={drawerState.clientInitial} size="md" />
+              <div>
+                <div className="flex items-center gap-[var(--space-1-5)]">
+                  <span className="text-14-bold">{drawerState.clientName}</span>
+                  <span className={`inline-flex items-center justify-center w-[18px] h-[18px] rounded-[4px] text-10-regular font-semibold ${gradeStyle.bg} ${gradeStyle.text}`}>
+                    {drawerGrade}
+                  </span>
+                </div>
+                <span className="text-12-regular text-grey-08">
+                  {drawerClient?.industry} · {drawerState.phaseGroups.length} 个阶段 · {drawerState.totalTasks} 个任务
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : undefined}
       >
         {drawerState && (
-          <div className="flex flex-col gap-[var(--space-4)]">
+          <div className="flex flex-col gap-[var(--space-5)]">
 
-            {/* ── Client Header ── */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-[var(--space-2)]">
-                <Avatar name={drawerState.clientInitial} size="md" />
-                <div>
-                  <div className="flex items-center gap-[var(--space-1-5)]">
-                    <span className="text-14-bold">{drawerState.clientName}</span>
-                    <span className={`inline-flex items-center justify-center w-[18px] h-[18px] rounded-[4px] text-10-regular font-semibold ${gradeStyle.bg} ${gradeStyle.text}`}>
-                      {drawerGrade}
-                    </span>
-                  </div>
-                  <span className="text-12-regular text-grey-08">
-                    {drawerClient?.industry} · {drawerState.phaseGroups.length} 个阶段
-                  </span>
-                </div>
-              </div>
-              <Badge variant="dark">{drawerState.totalTasks} 个任务</Badge>
-            </div>
-
-            {/* ── Phase Groups ── */}
+            {/* ── Phase Groups (collapsible sections) ── */}
             {drawerState.phaseGroups.map((group) => (
-              <div key={group.phase.id}>
-                {/* Phase Header */}
-                <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-2)]">
-                  <span className="inline-flex items-center justify-center w-[22px] h-[22px] rounded-md bg-grey-01 text-white text-10-regular font-semibold shrink-0">
-                    {group.phase.id}
-                  </span>
-                  <span className="text-12-bold text-grey-01">{group.phase.name}</span>
-                  <span className="text-10-regular text-grey-08">负责人: {group.phase.owner}</span>
-                  <span className="text-10-regular text-grey-08 ml-auto">{group.tasks.length} 项</span>
-                </div>
-
-                {/* Tasks in this phase */}
-                <div className="flex flex-col gap-[var(--space-2)] ml-[30px]">
-                  {group.tasks.map((task) => (
-                    <div key={task.id} className={`border border-stroke rounded-lg overflow-hidden ${task.completed ? 'opacity-50' : ''}`}>
-                      {/* Task Header */}
-                      <div className="flex items-center justify-between px-[var(--space-3)] py-[var(--space-2)] bg-bg">
-                        <div className="flex items-center gap-[var(--space-2)]">
-                          {task.cardType === 'change' && (
-                            <span className="text-10-regular text-orange bg-orange-tint-10 px-1.5 py-0.5 rounded">变更</span>
-                          )}
-                          <span className="text-12-bold text-grey-01">{task.title}</span>
-                        </div>
-                        <Badge variant={task.badge}>{task.badgeText}</Badge>
-                      </div>
-
-                      {/* Task Content */}
-                      <div className="px-[var(--space-3)] py-[var(--space-2)]">
-                        {task.desc && (
-                          <p className="text-12-regular text-grey-08 mb-2">{task.desc}</p>
-                        )}
-
-                        {/* Change diff */}
-                        {task.cardType === 'change' && task.changeDiff && (
-                          <div className="mb-2 flex flex-col gap-1">
-                            {task.changeDiff.map((d) => (
-                              <div key={d.field} className="flex items-center gap-1.5 text-12-regular">
-                                <span className="text-grey-08 w-[70px] shrink-0">{d.field}</span>
-                                <span className="text-red line-through text-10-regular">{d.from}</span>
-                                <span className="text-grey-08">→</span>
-                                <span className="text-l-cyan text-10-regular">{d.to}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Metrics */}
-                        {task.metrics && (
-                          <div className="flex gap-[var(--space-3)] mb-2">
-                            {task.metrics.map((m) => (
-                              <span key={m.label} className={`text-12-regular ${m.positive ? 'text-l-cyan font-medium' : 'text-grey-08'}`}>
-                                {m.label} {m.value}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Progress */}
-                        {task.progress !== undefined && (
-                          <div className="mb-2">
-                            <div className="flex justify-between text-10-regular mb-1">
-                              <span className="text-grey-08">进度</span>
-                              <span className="text-grey-06">{task.progress}%</span>
-                            </div>
-                            <div className="w-full h-[4px] bg-grey-12 rounded-full overflow-hidden">
-                              <div className="h-full bg-grey-01 rounded-full" style={{ width: `${task.progress}%` }} />
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Details */}
-                        {task.details && task.details.length > 0 && (
-                          <div className="flex flex-col gap-1">
-                            {task.details.map((d) => (
-                              <div key={d.label} className="flex justify-between text-12-regular">
-                                <span className="text-grey-08">{d.label}</span>
-                                <span className="text-12-medium" style={{ color: d.color || 'var(--grey-01)' }}>{d.value}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Task Actions */}
-                        {task.actions && task.actions.length > 0 && !drawerActions[task.id] && (
-                          <div className="flex flex-wrap gap-[var(--space-1-5)] mt-2 pt-2 border-t border-stroke">
-                            {task.actions.map((action) => (
-                              <button
-                                key={action.label}
-                                onClick={() => {
-                                  if (action.type === 'approval') {
-                                    handleTaskAction(task.id, 'approve')
-                                  } else if (action.href) {
-                                    router.push(action.href)
-                                  }
-                                }}
-                                className={`inline-flex items-center gap-1 px-[var(--space-2)] py-1.5 rounded-md text-12-bold cursor-pointer font-[inherit] transition-colors ${
-                                  action.type === 'approval'
-                                    ? 'bg-grey-01 text-white hover:opacity-80 border-none'
-                                    : 'bg-white text-grey-01 border border-stroke hover:bg-selected hover:border-grey-06 shadow-sm'
-                                }`}
-                              >
-                                {action.type === 'approval' && (
-                                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                    <path d="M4 8l3 3 5-6" />
-                                  </svg>
-                                )}
-                                {action.label}
-                                {action.type === 'link' && (
-                                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                                    <path d="M6 4l4 4-4 4" />
-                                  </svg>
-                                )}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Action Done State */}
-                        {drawerActions[task.id] && (
-                          <div className={`mt-2 rounded-md px-[var(--space-2)] py-1.5 text-center text-12-medium ${
-                            drawerActions[task.id] === 'approve' ? 'bg-cyan-tint-08 text-l-cyan' : 'bg-red-tint-08 text-red'
-                          }`}>
-                            {drawerActions[task.id] === 'approve' ? '✓ 已通过' : '✕ 已驳回'}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <PhaseSection
+                key={group.phase.id}
+                group={group}
+                drawerActions={drawerActions}
+                onTaskAction={handleTaskAction}
+                router={router}
+              />
             ))}
 
             {/* ── Quick Navigate to Client ── */}
@@ -410,6 +285,231 @@ export default function KanbanPage() {
           </div>
         )}
       </Drawer>
+    </div>
+  )
+}
+
+/* ── Phase Section (collapsible) ── */
+function PhaseSection({
+  group,
+  drawerActions,
+  onTaskAction,
+  router,
+}: {
+  group: PhaseTaskGroup
+  drawerActions: Record<string, 'approve' | 'reject'>
+  onTaskAction: (taskId: string, type: 'approve' | 'reject') => void
+  router: ReturnType<typeof useRouter>
+}) {
+  const [expanded, setExpanded] = useState(true)
+
+  return (
+    <div>
+      {/* Phase Header — clickable to toggle */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center gap-[var(--space-2)] w-full mb-[var(--space-2)] cursor-pointer border-none bg-transparent p-0 font-[inherit] text-left"
+      >
+        <span className="inline-flex items-center justify-center w-[22px] h-[22px] rounded-md bg-grey-01 text-white text-10-regular font-semibold shrink-0">
+          {group.phase.id}
+        </span>
+        <span className="text-12-bold text-grey-01">{group.phase.name}</span>
+        <span className="text-10-regular text-grey-08">负责人: {group.phase.owner}</span>
+        <span className="text-10-regular text-grey-08 ml-auto">{group.tasks.length} 项</span>
+        <svg
+          width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--grey-08)"
+          strokeWidth="1.5" strokeLinecap="round"
+          className={`shrink-0 transition-transform duration-200 ${expanded ? 'rotate-0' : '-rotate-90'}`}
+        >
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+      </button>
+
+      {/* Tasks — collapsible */}
+      {expanded && (
+        <div className="flex flex-col gap-[var(--space-2)] pl-[30px] border-l-2 border-grey-12 ml-[10px]">
+          {group.tasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              actionState={drawerActions[task.id]}
+              onAction={onTaskAction}
+              router={router}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ── Single Task Card inside drawer ── */
+function TaskCard({
+  task,
+  actionState,
+  onAction,
+  router,
+}: {
+  task: CardData
+  actionState?: 'approve' | 'reject'
+  onAction: (taskId: string, type: 'approve' | 'reject') => void
+  router: ReturnType<typeof useRouter>
+}) {
+  return (
+    <div className={`border border-stroke rounded-lg overflow-hidden ${task.completed ? 'opacity-50' : ''}`}>
+      {/* Task Header */}
+      <div className="flex items-center justify-between px-[var(--space-3)] py-[var(--space-2)] bg-bg">
+        <div className="flex items-center gap-[var(--space-2)]">
+          {task.cardType === 'change' && (
+            <span className="text-10-regular text-orange bg-orange-tint-10 px-1.5 py-0.5 rounded">变更</span>
+          )}
+          <span className="text-12-bold text-grey-01">{task.title}</span>
+        </div>
+        <Badge variant={task.badge}>{task.badgeText}</Badge>
+      </div>
+
+      {/* Task Content */}
+      <div className="px-[var(--space-3)] py-[var(--space-2)]">
+        {task.desc && (
+          <p className="text-12-regular text-grey-08 mb-2">{task.desc}</p>
+        )}
+
+        {/* Change diff */}
+        {task.cardType === 'change' && task.changeDiff && (
+          <div className="mb-2 flex flex-col gap-1">
+            {task.changeDiff.map((d) => (
+              <div key={d.field} className="flex items-center gap-1.5 text-12-regular">
+                <span className="text-grey-08 w-[70px] shrink-0">{d.field}</span>
+                <span className="text-red line-through text-10-regular">{d.from}</span>
+                <span className="text-grey-08">→</span>
+                <span className="text-l-cyan text-10-regular">{d.to}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Metrics */}
+        {task.metrics && (
+          <div className="flex gap-[var(--space-3)] mb-2">
+            {task.metrics.map((m) => (
+              <span key={m.label} className={`text-12-regular ${m.positive ? 'text-l-cyan font-medium' : 'text-grey-08'}`}>
+                {m.label} {m.value}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Progress */}
+        {task.progress !== undefined && (
+          <div className="mb-2">
+            <div className="flex justify-between text-10-regular mb-1">
+              <span className="text-grey-08">进度</span>
+              <span className="text-grey-06">{task.progress}%</span>
+            </div>
+            <div className="w-full h-[4px] bg-grey-12 rounded-full overflow-hidden">
+              <div className="h-full bg-grey-01 rounded-full" style={{ width: `${task.progress}%` }} />
+            </div>
+          </div>
+        )}
+
+        {/* Details */}
+        {task.details && task.details.length > 0 && (
+          <div className="flex flex-col gap-1">
+            {task.details.map((d) => (
+              <div key={d.label} className="flex justify-between text-12-regular">
+                <span className="text-grey-08">{d.label}</span>
+                <span className="text-12-medium" style={{ color: d.color || 'var(--grey-01)' }}>{d.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Approval Steps */}
+        {task.approvalSteps && task.approvalSteps.length > 0 && (
+          <div className="mt-2 pt-2 border-t border-stroke">
+            <div className="flex flex-col gap-1">
+              {task.approvalSteps.map((step, si) => (
+                <div key={step.role} className="flex items-center gap-[var(--space-2)]">
+                  {/* Step connector */}
+                  <div className="flex flex-col items-center w-[16px] shrink-0">
+                    <div className={`w-[8px] h-[8px] rounded-full ${
+                      step.status === 'done' ? 'bg-l-cyan' :
+                      step.status === 'current' ? 'bg-grey-01' :
+                      'bg-grey-12'
+                    }`} />
+                    {si < task.approvalSteps!.length - 1 && (
+                      <div className={`w-[1.5px] h-[12px] ${
+                        task.approvalSteps![si + 1].status !== 'pending' ? 'bg-grey-01' : 'bg-grey-12'
+                      }`} />
+                    )}
+                  </div>
+                  {/* Step info */}
+                  <div className="flex items-center gap-1 flex-1 min-w-0">
+                    <span className={`text-10-regular ${step.status === 'current' ? 'text-grey-01 font-semibold' : 'text-grey-08'}`}>
+                      {step.role}
+                    </span>
+                    <span className={`text-10-regular ${step.status === 'current' ? 'text-grey-06' : 'text-grey-08 opacity-60'}`}>
+                      {step.person}
+                    </span>
+                    {step.status === 'done' && (
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--l-cyan)" strokeWidth="2.5" strokeLinecap="round" className="shrink-0">
+                        <path d="M4 8l3 3 5-6" />
+                      </svg>
+                    )}
+                    {step.date && (
+                      <span className="text-10-regular text-grey-08 opacity-50 ml-auto shrink-0">{step.date}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Task Actions */}
+        {task.actions && task.actions.length > 0 && !actionState && (
+          <div className="flex flex-wrap gap-[var(--space-1-5)] mt-2 pt-2 border-t border-stroke">
+            {task.actions.map((action) => (
+              <button
+                key={action.label}
+                onClick={() => {
+                  if (action.type === 'approval') {
+                    onAction(task.id, 'approve')
+                  } else if (action.href) {
+                    router.push(action.href)
+                  }
+                }}
+                className={`inline-flex items-center gap-1 px-[var(--space-2)] py-1.5 rounded-md text-12-bold cursor-pointer font-[inherit] transition-colors ${
+                  action.type === 'approval'
+                    ? 'bg-grey-01 text-white hover:opacity-80 border-none'
+                    : 'bg-white text-grey-01 border border-stroke hover:bg-selected hover:border-grey-06 shadow-sm'
+                }`}
+              >
+                {action.type === 'approval' && (
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M4 8l3 3 5-6" />
+                  </svg>
+                )}
+                {action.label}
+                {action.type === 'link' && (
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <path d="M6 4l4 4-4 4" />
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Action Done State */}
+        {actionState && (
+          <div className={`mt-2 rounded-md px-[var(--space-2)] py-1.5 text-center text-12-medium ${
+            actionState === 'approve' ? 'bg-cyan-tint-08 text-l-cyan' : 'bg-red-tint-08 text-red'
+          }`}>
+            {actionState === 'approve' ? '✓ 已通过' : '✕ 已驳回'}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

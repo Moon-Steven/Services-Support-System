@@ -19,10 +19,9 @@ export function DashboardToolbar({
   onPlatformChange,
 }: DashboardToolbarProps) {
   return (
-    <div className="flex items-center justify-between mb-[var(--space-6)]">
+    <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-24-bold text-grey-01">测试期数据看板</h1>
-        <p className="text-12-regular text-grey-08 mt-0.5">
+        <p className="text-12-regular text-grey-08">
           客户：{clientName} · 测试期第 8 天
         </p>
       </div>

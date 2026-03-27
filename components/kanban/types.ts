@@ -27,6 +27,14 @@ export type ChangeDiff = {
   to: string
 }
 
+export type ApprovalStep = {
+  role: string
+  person: string
+  status: 'done' | 'current' | 'pending'
+  date?: string
+  comment?: string
+}
+
 export type CardData = {
   id: string
   clientId: string
@@ -46,6 +54,8 @@ export type CardData = {
   cardType?: 'task' | 'change'
   /** For change-type cards: diff showing what changed */
   changeDiff?: ChangeDiff[]
+  /** Approval flow steps: who submits → who reviews */
+  approvalSteps?: ApprovalStep[]
 }
 
 export type Phase = {
