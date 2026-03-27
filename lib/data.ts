@@ -608,6 +608,15 @@ export type IOOrder = {
   refundAmount?: number
   consumed?: number
   serviceFee?: number
+  /* detail fields (matching creation form) */
+  objective?: string
+  description?: string
+  ownerName?: string
+  ownerRole?: string
+  startDate?: string
+  endDate?: string
+  duration?: number
+  relatedDoc?: string
 }
 
 export const ioOrders: IOOrder[] = [
@@ -615,6 +624,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-001', clientId: 'wavebone', clientName: 'Wavebone', type: '新建投放',
     status: '投放中', amount: 30000, period: '2026-03-18 ~ 2026-04-01', channels: ['Meta', 'TikTok'],
     createdAt: '2026-03-15', createdBy: '王斯琼',
+    objective: '效果转化', description: '北美市场阅读APP获客，核心关注CPA与ROAS', ownerName: '罗依桐', ownerRole: '投手', startDate: '2026-03-18', endDate: '2026-04-01', duration: 14, relatedDoc: '框架协议',
     approvals: [
       { role: '销售', person: '王斯琼', status: 'approved', date: '03-15' },
       { role: '运营', person: '罗依桐', status: 'approved', date: '03-15' },
@@ -642,6 +652,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-002', clientId: 'fintech', clientName: 'FinTech Pro', type: '新建投放',
     status: '审批中', amount: 50000, period: '2026-04-01 ~ 2026-04-14', channels: ['Google Ads', 'Meta'],
     createdAt: '2026-03-24', createdBy: '王斯琼',
+    objective: '用户增长', description: '金融行业海外用户拓展，需额外牌照审核', ownerName: '郭晋光', ownerRole: '运营', startDate: '2026-04-01', endDate: '2026-04-14', duration: 14, relatedDoc: '框架协议',
     approvals: [
       { role: '销售', person: '王斯琼', status: 'approved', date: '03-24' },
       { role: '运营', person: '郭晋光', status: 'pending' },
@@ -663,6 +674,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-003', clientId: 'payeasy', clientName: 'PayEasy', type: '新建投放',
     status: '待打款', amount: 80000, period: '2026-04-01 ~ 2026-04-14', channels: ['Google Ads'],
     createdAt: '2026-03-20', createdBy: '王斯琼',
+    objective: '用户增长', description: '支付工具推广，核心市场东南亚', ownerName: '罗依桐', ownerRole: '投手', startDate: '2026-04-01', endDate: '2026-04-14', duration: 14, relatedDoc: '框架协议',
     approvals: [
       { role: '销售', person: '王斯琼', status: 'approved', date: '03-20' },
       { role: '运营', person: '罗依桐', status: 'approved', date: '03-21' },
@@ -684,6 +696,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-004', clientId: 'medplus', clientName: 'MedPlus', type: '新建投放',
     status: '投放中', amount: 35000, period: '2026-03-15 ~ 2026-03-29', channels: ['Meta', 'TikTok'],
     createdAt: '2026-03-12', createdBy: '王斯琼',
+    objective: '效果转化', description: '医疗健康APP海外推广，高风险行业需合规配合', ownerName: '罗依桐', ownerRole: '投手', startDate: '2026-03-15', endDate: '2026-03-29', duration: 14, relatedDoc: '补充协议',
     approvals: [
       { role: '销售', person: '王斯琼', status: 'approved', date: '03-12' },
       { role: '运营', person: '罗依桐', status: 'approved', date: '03-13' },
@@ -711,6 +724,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-005', clientId: 'gameon', clientName: 'GameOn', type: '变更需求',
     status: '审批中', amount: 5000, period: '2026-03-25 ~ 2026-04-01', channels: ['Meta'],
     createdAt: '2026-03-25', createdBy: '郭晋光',
+    objective: '效果转化', description: 'TikTok新渠道追加测试预算', ownerName: '罗依桐', ownerRole: '投手', startDate: '2026-03-25', endDate: '2026-04-01', duration: 7, relatedDoc: '补充协议',
     approvals: [
       { role: '销售', person: '郭晋光', status: 'approved', date: '03-25' },
       { role: '运营', person: '罗依桐', status: 'pending' },
@@ -732,6 +746,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-006', clientId: 'quickbuy', clientName: 'QuickBuy', type: '新建投放',
     status: '投放中', amount: 15000, period: '2026-03-23 ~ 2026-04-06', channels: ['Meta', 'Google Ads'],
     createdAt: '2026-03-20', createdBy: '郭晋光',
+    objective: '效果转化', description: '电商行业获客投放，多渠道测试策略', ownerName: '罗依桐', ownerRole: '投手', startDate: '2026-03-23', endDate: '2026-04-06', duration: 14, relatedDoc: '框架协议',
     approvals: [
       { role: '销售', person: '郭晋光', status: 'approved', date: '03-20' },
       { role: '运营', person: '罗依桐', status: 'approved', date: '03-21' },
@@ -753,6 +768,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-007', clientId: 'novelking', clientName: 'NovelKing', type: '新建投放',
     status: '已完成', amount: 30000, period: '2026-02-15 ~ 2026-03-15', channels: ['Meta', 'TikTok'],
     createdAt: '2026-02-10', createdBy: '王斯琼',
+    objective: '效果转化', description: '小说阅读APP海外获客，已完成测试期', ownerName: '罗依桐', ownerRole: '投手', startDate: '2026-02-15', endDate: '2026-03-15', duration: 28, relatedDoc: '续约协议',
     approvals: [
       { role: '销售', person: '王斯琼', status: 'approved', date: '02-10' },
       { role: '运营', person: '罗依桐', status: 'approved', date: '02-11' },
@@ -775,6 +791,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-008', clientId: 'brightpath', clientName: 'BrightPath', type: '终止退款',
     status: '终止退款中', amount: 15000, period: '2026-02-20 ~ 2026-03-20', channels: ['Meta'],
     createdAt: '2026-03-22', createdBy: '王斯琼',
+    objective: '品牌曝光', description: '教育行业推广，因效果不达标终止', ownerName: '陶阳阳', ownerRole: '投手', startDate: '2026-02-20', endDate: '2026-03-20', duration: 28, relatedDoc: '框架协议',
     terminationType: '效果不达标', terminationReason: '测试期 CPA 持续高于目标值 40%，客户沟通后决定终止',
     refundAmount: 8750, consumed: 4500, serviceFee: 675,
     approvals: [
@@ -798,6 +815,7 @@ export const ioOrders: IOOrder[] = [
     id: 'IO-2026-009', clientId: 'readnow', clientName: 'ReadNow', type: '新建投放',
     status: '审批中', amount: 20000, period: '2026-04-01 ~ 2026-04-14', channels: ['Meta', 'TikTok'],
     createdAt: '2026-03-25', createdBy: '郭晋光',
+    objective: '用户增长', description: '阅读APP新客获取，双渠道同步测试', ownerName: '罗依桐', ownerRole: '投手', startDate: '2026-04-01', endDate: '2026-04-14', duration: 14, relatedDoc: '框架协议',
     approvals: [
       { role: '销售', person: '郭晋光', status: 'approved', date: '03-25' },
       { role: '运营', person: '罗依桐', status: 'pending' },
@@ -1443,7 +1461,7 @@ export const gradeChangeRequests: GradeChangeRequest[] = [
     steps: [
       { role: '销售', person: '王斯琼', status: 'done', date: '2026-03-10', comment: '发起评级变更申请' },
       { role: '行运', person: '李行运', status: 'done', date: '2026-03-11', comment: '数据表现确实优秀，同意升级' },
-      { role: '振宇', person: '张振宇', status: 'done', date: '2026-03-12', comment: '同意，安排高级投手跟进' },
+      { role: '振宇', person: '郭振宇', status: 'done', date: '2026-03-12', comment: '同意，安排高级投手跟进' },
     ],
   },
   // ShopMax: pending ops review (in-progress)
@@ -1460,7 +1478,7 @@ export const gradeChangeRequests: GradeChangeRequest[] = [
     steps: [
       { role: '销售', person: '王斯琼', status: 'done', date: '2026-03-24', comment: '发起评级变更申请' },
       { role: '行运', person: '李行运', status: 'current' },
-      { role: '振宇', person: '张振宇', status: 'pending' },
+      { role: '振宇', person: '郭振宇', status: 'pending' },
     ],
   },
   // GameOn: pending CEO (in-progress, ops approved)
@@ -1477,7 +1495,7 @@ export const gradeChangeRequests: GradeChangeRequest[] = [
     steps: [
       { role: '销售', person: '王斯琼', status: 'done', date: '2026-03-20', comment: '发起评级变更申请' },
       { role: '行运', person: '李行运', status: 'done', date: '2026-03-22', comment: '数据确实非常优秀，支持升为 S 级' },
-      { role: '振宇', person: '张振宇', status: 'current' },
+      { role: '振宇', person: '郭振宇', status: 'current' },
     ],
   },
   // FinTech Pro: rejected downgrade attempt (historical)
@@ -1494,7 +1512,7 @@ export const gradeChangeRequests: GradeChangeRequest[] = [
     steps: [
       { role: '销售', person: '王斯琼', status: 'done', date: '2026-03-05', comment: '发起评级变更申请' },
       { role: '行运', person: '李行运', status: 'done', date: '2026-03-06', comment: '投放数据尚未达到 S 级标准，建议继续观察一个月' },
-      { role: '振宇', person: '张振宇', status: 'rejected', date: '2026-03-07', comment: '当前阶段数据不够充分，等 Q2 数据出来再评估' },
+      { role: '振宇', person: '郭振宇', status: 'rejected', date: '2026-03-07', comment: '当前阶段数据不够充分，等 Q2 数据出来再评估' },
     ],
   },
 ]

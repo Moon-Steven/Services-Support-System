@@ -209,29 +209,96 @@ function IOOrdersPageContent() {
           open={!!selectedOrder}
           onClose={() => setSelectedOrder(null)}
           title={`IO 单详情 · ${selectedOrder.id}`}
-          width={520}
+          width={640}
         >
           <div className="flex flex-col gap-[var(--space-4)]">
+            {/* Badges */}
             <div className="flex items-center gap-[var(--space-2)]">
               <Badge variant={typeVariant(selectedOrder.type)}>{selectedOrder.type}</Badge>
               <Badge variant={statusVariant(selectedOrder.status)}>{selectedOrder.status}</Badge>
             </div>
-            <div className="grid grid-cols-2 gap-[var(--space-3)]">
-              {[
-                ['客户', selectedOrder.clientName],
-                ['金额', `$${selectedOrder.amount.toLocaleString()}`],
-                ['投放周期', selectedOrder.period],
-                ['渠道', selectedOrder.channels.join(' / ')],
-                ['提交人', selectedOrder.createdBy],
-                ['提交日期', selectedOrder.createdAt],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <div className="text-10-regular text-grey-08 mb-[2px]">{label}</div>
-                  <div className="text-14-medium text-grey-01">{value}</div>
+
+            {/* Section: 申请详情 */}
+            <div>
+              <div className="text-12-bold text-grey-06 mb-[var(--space-2)]">申请详情</div>
+              <div className="bg-bg rounded-lg p-[var(--space-3)]">
+                <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-3)]">
+                  <Avatar name={selectedOrder.clientName[0]} size="sm" />
+                  <div>
+                    <a href={`/client/${selectedOrder.clientId}`} className="text-14-bold text-grey-01 hover:text-l-cyan hover:underline transition-colors">
+                      {selectedOrder.clientName}
+                    </a>
+                  </div>
                 </div>
-              ))}
+                <div className="grid grid-cols-2 gap-x-[var(--space-4)] gap-y-[var(--space-2)]">
+                  <div>
+                    <div className="text-10-regular text-grey-08">客户目标</div>
+                    <div className="text-14-medium text-grey-01">{selectedOrder.objective || '—'}</div>
+                  </div>
+                  <div>
+                    <div className="text-10-regular text-grey-08">预算金额</div>
+                    <div className="text-16-bold text-grey-01">${selectedOrder.amount.toLocaleString()}</div>
+                  </div>
+                </div>
+                {selectedOrder.description && (
+                  <div className="mt-[var(--space-2)] pt-[var(--space-2)] border-t border-stroke">
+                    <div className="text-10-regular text-grey-08 mb-1">目标说明</div>
+                    <div className="text-12-regular text-grey-06">{selectedOrder.description}</div>
+                  </div>
+                )}
+              </div>
             </div>
-            {/* Approval chain detail */}
+
+            {/* Section: 执行信息 */}
+            <div>
+              <div className="text-12-bold text-grey-06 mb-[var(--space-2)]">执行信息</div>
+              <div className="border border-stroke rounded-lg overflow-hidden">
+                {[
+                  ['业务负责人', selectedOrder.ownerName ? `${selectedOrder.ownerName}（${selectedOrder.ownerRole}）` : selectedOrder.createdBy],
+                  ['投放周期', selectedOrder.startDate && selectedOrder.endDate ? `${selectedOrder.startDate} ~ ${selectedOrder.endDate}（${selectedOrder.duration}天）` : selectedOrder.period],
+                  ['投放渠道', selectedOrder.channels.join(' / ')],
+                  ['关联内容', selectedOrder.relatedDoc || '—'],
+                  ['提交人', selectedOrder.createdBy],
+                  ['提交日期', selectedOrder.createdAt],
+                ].map(([label, value], i, arr) => (
+                  <div key={label} className={`flex justify-between px-[var(--space-3)] py-[var(--space-2)] text-12-regular ${i < arr.length - 1 ? 'border-b border-stroke' : ''}`}>
+                    <span className="text-grey-08">{label}</span>
+                    <span className="text-14-medium text-grey-01">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Termination Section */}
+            {selectedOrder.type === '终止退款' && (
+              <div className="bg-red-tint-08 rounded-lg p-[var(--space-3)]">
+                <div className="text-12-bold text-red mb-[var(--space-2)]">终止退款信息</div>
+                <div className="grid grid-cols-2 gap-[var(--space-2)]">
+                  <div>
+                    <div className="text-10-regular text-grey-08">终止类型</div>
+                    <div className="text-12-medium text-red">{selectedOrder.terminationType || '—'}</div>
+                  </div>
+                  <div>
+                    <div className="text-10-regular text-grey-08">终止原因</div>
+                    <div className="text-12-regular text-grey-06">{selectedOrder.terminationReason || '—'}</div>
+                  </div>
+                  <div>
+                    <div className="text-10-regular text-grey-08">已消耗</div>
+                    <div className="text-14-medium text-grey-01">${selectedOrder.consumed?.toLocaleString() || '—'}</div>
+                  </div>
+                  <div>
+                    <div className="text-10-regular text-grey-08">服务费</div>
+                    <div className="text-14-medium text-grey-01">${selectedOrder.serviceFee?.toLocaleString() || '—'}</div>
+                  </div>
+                  <div>
+                    <div className="text-10-regular text-grey-08">预估退款</div>
+                    <div className="text-16-bold text-orange">${selectedOrder.refundAmount?.toLocaleString() || '—'}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Approval Chain */}
             <div>
               <div className="text-12-bold text-grey-06 mb-[var(--space-2)]">审批链</div>
               <div className="flex flex-col gap-[var(--space-2)]">
@@ -251,6 +318,8 @@ function IOOrdersPageContent() {
                 ))}
               </div>
             </div>
+
+            {/* Footer */}
             <div className="flex justify-end">
               <Button variant="secondary" onClick={() => setSelectedOrder(null)}>关闭</Button>
             </div>

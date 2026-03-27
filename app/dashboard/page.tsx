@@ -13,6 +13,8 @@ import {
   CreativeTop,
   StrategyTimeline,
   TestProgress,
+  SpendProgress,
+  RoiTrend,
 } from '@/components/dashboard'
 import type { Campaign, Creative, StrategyNote } from '@/components/dashboard'
 
@@ -84,8 +86,20 @@ function DashboardInner() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-2 gap-[var(--space-5)] mb-[var(--space-6)]">
-        <SpendInstallChart days={days} spend={spend} installs={installs} />
-        <CpaRoasChart days={days} cpaData={cpaData} roasData={roasData} />
+        <SpendProgress
+          totalSpend={248900}
+          budget={500000}
+          dailySpend={[32000, 35000, 38000, 41000, 37000, 42000, 39500]}
+          labels={['Apr 11', 'Apr 12', 'Apr 13', 'Apr 14', 'Apr 15', 'Apr 16', 'Apr 17']}
+          daysElapsed={7}
+          totalDays={14}
+        />
+        <RoiTrend
+          currentRoi={1.85}
+          roiChange={0.12}
+          weeklyRoi={[1.2, 1.35, 1.45, 1.58, 1.65, 1.73, 1.85]}
+          labels={['Feb 18', 'Feb 25', 'Mar 4', 'Mar 11', 'Mar 18', 'Mar 25', 'Apr 1']}
+        />
       </div>
 
       {/* Bottom Row: Table + Sidebar */}

@@ -1,4 +1,5 @@
-import type { Phase, CardData } from './types'
+import type { Phase, CardData, MergedCard, DisplayCard } from './types'
+import { isMergedCard } from './types'
 
 export const phases: Phase[] = [
   { id: 1, name: '客户触达', owner: '王斯琼', opacity: 1 },
@@ -21,6 +22,17 @@ export const kanbanCards: Record<number, CardData[]> = {
       actions: [
         { label: '审批合规', type: 'approval', taskId: 'onboard-shopmax-compliance' },
         { label: 'IO 单', type: 'link', href: '/io-orders?client=shopmax' },
+      ],
+    },
+    {
+      id: 'c1-1b', clientId: 'shopmax', clientName: 'ShopMax', clientInitial: 'S', grade: 'B',
+      badge: 'grey', badgeText: '待处理', title: 'Meta 账户资质提交', desc: '电商行业 Meta 广告账户开户资质材料',
+      details: [
+        { label: '材料', value: '营业执照 + 授权书' },
+        { label: '负责人', value: '陶阳阳' },
+      ],
+      actions: [
+        { label: '资产管理', type: 'link', href: '/assets?client=shopmax' },
       ],
     },
     {
@@ -58,6 +70,17 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '查看投放', type: 'link', href: '/dashboard?client=wavebone' },
       ],
     },
+    {
+      id: 'c1-4b', clientId: 'wavebone', clientName: 'Wavebone', clientInitial: 'W', grade: 'A',
+      badge: 'grey', badgeText: '待处理', title: 'Meta 渠道资质年审', desc: '年度资质复审，需更新营业资料',
+      details: [
+        { label: '截止日期', value: '2026-04-15' },
+        { label: '负责人', value: '陶阳阳' },
+      ],
+      actions: [
+        { label: '资产管理', type: 'link', href: '/assets?client=wavebone' },
+      ],
+    },
   ],
   2: [
     {
@@ -71,6 +94,17 @@ export const kanbanCards: Record<number, CardData[]> = {
       actions: [
         { label: '审批 IO 单', type: 'approval', taskId: 'io-IO-2026-008-finance_review' },
         { label: '查看 IO 单', type: 'link', href: '/io-orders?client=fintech' },
+      ],
+    },
+    {
+      id: 'c2-1b', clientId: 'fintech', clientName: 'FinTech Pro', clientInitial: 'F', grade: 'S',
+      badge: 'grey', badgeText: '待处理', title: '投放素材准备', desc: 'Google Ads 素材制作与审核',
+      details: [
+        { label: '渠道', value: 'Google Ads' },
+        { label: '素材类型', value: '搜索广告文案 × 10 + 展示素材 × 5' },
+      ],
+      actions: [
+        { label: '资产管理', type: 'link', href: '/assets?client=fintech' },
       ],
     },
     {
@@ -153,6 +187,24 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: 'Clock', type: 'link', href: '/clock-config?client=wavebone' },
       ],
     },
+    // Change card: Wavebone budget change
+    {
+      id: 'c3-1c', clientId: 'wavebone', clientName: 'Wavebone', clientInitial: 'W', grade: 'A',
+      badge: 'orange', badgeText: '审批中', title: '预算变更 #003', desc: '日均预算调整，测试表现良好',
+      cardType: 'change',
+      changeDiff: [
+        { field: '日均预算', from: '$1,500', to: '$2,200' },
+        { field: '总预算', from: '$21,000', to: '$30,800' },
+      ],
+      details: [
+        { label: '变更类型', value: '预算调整' },
+        { label: '发起人', value: '罗依桐' },
+        { label: '审批进度', value: '行运审核中', color: 'var(--orange)' },
+      ],
+      actions: [
+        { label: '审批变更', type: 'approval', taskId: 'change-wavebone-budget-003' },
+      ],
+    },
     {
       id: 'c3-2', clientId: 'quickbuy', clientName: 'QuickBuy', clientInitial: 'Q', grade: 'B',
       badge: 'dark', badgeText: 'D3/14', title: '投放测试中', desc: '',
@@ -171,6 +223,17 @@ export const kanbanCards: Record<number, CardData[]> = {
       ],
     },
     {
+      id: 'c3-2b', clientId: 'quickbuy', clientName: 'QuickBuy', clientInitial: 'Q', grade: 'B',
+      badge: 'grey', badgeText: '待处理', title: '新素材测试', desc: '电商短视频素材 A/B 测试',
+      details: [
+        { label: '素材', value: '竖版短视频 × 4' },
+        { label: '预期', value: 'CPA 降至 $4.50 以下' },
+      ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=quickbuy' },
+      ],
+    },
+    {
       id: 'c3-3', clientId: 'medplus', clientName: 'MedPlus', clientInitial: 'M', grade: 'S',
       badge: 'dark', badgeText: 'D11/14', title: '投放测试中', desc: '',
       metrics: [
@@ -186,6 +249,25 @@ export const kanbanCards: Record<number, CardData[]> = {
       actions: [
         { label: '查看投放', type: 'link', href: '/dashboard?client=medplus' },
         { label: '学习笔记', type: 'link', href: '/learning-notes?client=medplus' },
+      ],
+    },
+    // Change card: MedPlus targeting change
+    {
+      id: 'c3-3c', clientId: 'medplus', clientName: 'MedPlus', clientInitial: 'M', grade: 'S',
+      badge: 'cyan', badgeText: '已通过', title: '定向策略变更 #002', desc: '调整人群定向，扩大受众范围',
+      cardType: 'change',
+      completed: true,
+      changeDiff: [
+        { field: '受众范围', from: '25-45 健康爱好者', to: '18-55 广泛兴趣' },
+        { field: '排除人群', from: '无', to: '已安装用户' },
+      ],
+      details: [
+        { label: '变更类型', value: '定向策略' },
+        { label: '发起人', value: '罗依桐' },
+        { label: '状态', value: '已生效', color: 'var(--l-cyan)' },
+      ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=medplus' },
       ],
     },
     {
@@ -240,6 +322,24 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '评级变更', type: 'link', href: '/client/gameon' },
       ],
     },
+    // Change card: GameOn creative direction change during renewal
+    {
+      id: 'c4-1c', clientId: 'gameon', clientName: 'GameOn', clientInitial: 'G', grade: 'B',
+      badge: 'orange', badgeText: '审批中', title: '素材方向变更 #001', desc: '续约前调整素材创意方向',
+      cardType: 'change',
+      changeDiff: [
+        { field: '素材风格', from: '写实截图', to: '动画 CG + 玩法展示' },
+        { field: '投放比例', from: 'Meta 100%', to: 'Meta 60% + TikTok 40%' },
+      ],
+      details: [
+        { label: '变更类型', value: '素材策略' },
+        { label: '发起人', value: '郭晋光' },
+        { label: '审批进度', value: '运营审核中', color: 'var(--orange)' },
+      ],
+      actions: [
+        { label: '审批变更', type: 'approval', taskId: 'change-gameon-creative-001' },
+      ],
+    },
     {
       id: 'c4-2', clientId: 'novelking', clientName: 'NovelKing', clientInitial: 'N', grade: 'A',
       badge: 'cyan', badgeText: '已续约', title: '正式合作已启动', desc: '小说/阅读行业，月预算 $50K',
@@ -265,6 +365,25 @@ export const kanbanCards: Record<number, CardData[]> = {
       actions: [
         { label: '投放提案', type: 'link', href: '/proposal?client=wavebone' },
         { label: '评级变更', type: 'link', href: '/client/wavebone' },
+      ],
+    },
+    // Change card: Wavebone channel expansion for renewal
+    {
+      id: 'c4-3c', clientId: 'wavebone', clientName: 'Wavebone', clientInitial: 'W', grade: 'A',
+      badge: 'cyan', badgeText: '已通过', title: '渠道扩展变更 #004', desc: '续约后扩展 TikTok 渠道',
+      cardType: 'change',
+      completed: true,
+      changeDiff: [
+        { field: '投放渠道', from: 'Meta', to: 'Meta + TikTok' },
+        { field: '月预算分配', from: 'Meta $40K', to: 'Meta $28K + TikTok $12K' },
+      ],
+      details: [
+        { label: '变更类型', value: '渠道扩展' },
+        { label: '发起人', value: '罗依桐' },
+        { label: '状态', value: '已生效', color: 'var(--l-cyan)' },
+      ],
+      actions: [
+        { label: '查看投放', type: 'link', href: '/dashboard?client=wavebone' },
       ],
     },
   ],
@@ -296,6 +415,53 @@ export const kanbanCards: Record<number, CardData[]> = {
       ],
     },
   ],
+}
+
+/* ── Merge same-client-same-phase cards into one display card ── */
+const badgePriority: Record<string, number> = {
+  red: 5,
+  orange: 4,
+  dark: 3,
+  cyan: 2,
+  grey: 1,
+}
+
+export function mergeCards(cards: CardData[]): DisplayCard[] {
+  const groups = new Map<string, CardData[]>()
+
+  for (const card of cards) {
+    const existing = groups.get(card.clientId)
+    if (existing) {
+      existing.push(card)
+    } else {
+      groups.set(card.clientId, [card])
+    }
+  }
+
+  const result: DisplayCard[] = []
+  for (const [, group] of groups) {
+    if (group.length === 1) {
+      result.push(group[0])
+    } else {
+      // Sort by badge priority (highest first) for primary display
+      const sorted = [...group].sort((a, b) =>
+        (badgePriority[b.badge] || 0) - (badgePriority[a.badge] || 0)
+      )
+      const primary = sorted[0]
+      const merged: MergedCard = {
+        isMerged: true,
+        clientId: primary.clientId,
+        clientName: primary.clientName,
+        clientInitial: primary.clientInitial,
+        grade: primary.grade,
+        tasks: group, // keep original order
+        badge: primary.badge,
+        badgeText: `${group.length} 个任务`,
+      }
+      result.push(merged)
+    }
+  }
+  return result
 }
 
 export const phaseCounts = phases.map((p) => kanbanCards[p.id]?.length || 0)

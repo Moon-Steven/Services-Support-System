@@ -35,7 +35,6 @@ const navGroups: NavGroup[] = [
     items: [
       { name: 'Onboarding', href: '/kanban', icon: IconKanban },
       { name: '客户列表', href: '/clients', icon: IconUsers },
-      { name: '审批工作台', href: '/approvals', icon: IconClipboardCheck },
     ],
   },
   {
@@ -50,7 +49,6 @@ const navGroups: NavGroup[] = [
     label: '交付运营',
     items: [
       { name: '资产管理', href: '/assets', icon: IconCard },
-      { name: '变更管理', href: '/changes', icon: IconSliders },
       { name: 'Clock 配置', href: '/clock-config', icon: IconClock },
       { name: '学习笔记', href: '/learning-notes', icon: IconNote },
     ],

@@ -1,22 +1,25 @@
 'use client'
 
 import { Badge } from '@/components/ui/Badge'
-import type { Phase, CardData } from './types'
+import type { Phase, CardData, DisplayCard } from './types'
+import { isMergedCard } from './types'
 import { KanbanCard } from './KanbanCard'
 
 interface KanbanColumnProps {
   phase: Phase
-  cards: CardData[]
+  cards: DisplayCard[]
+  rawCount: number
   dimmed: boolean
   expandedCards: Set<string>
-  isCardVisible: (card: CardData) => boolean
-  onToggleCard: (cardId: string) => void
+  isCardVisible: (card: DisplayCard) => boolean
+  onToggleCard: (card: DisplayCard) => void
   onNavigate: (clientId: string, page: string) => void
 }
 
 export function KanbanColumn({
   phase,
   cards,
+  rawCount,
   dimmed,
   expandedCards,
   isCardVisible,
@@ -45,21 +48,24 @@ export function KanbanColumn({
               </p>
             </div>
           </div>
-          <Badge variant="grey">{cards.length} 任务</Badge>
+          <Badge variant="grey">{rawCount} 任务</Badge>
         </div>
 
         {/* Cards */}
         <div className="flex flex-col gap-2-5">
-          {cards.map((card) => (
-            <KanbanCard
-              key={card.id}
-              card={card}
-              visible={isCardVisible(card)}
-              expanded={expandedCards.has(card.id)}
-              onToggle={() => onToggleCard(card.id)}
-              onNavigate={onNavigate}
-            />
-          ))}
+          {cards.map((card) => {
+            const key = isMergedCard(card) ? `merged-${card.clientId}` : card.id
+            return (
+              <KanbanCard
+                key={key}
+                card={card}
+                visible={isCardVisible(card)}
+                expanded={expandedCards.has(key)}
+                onToggle={() => onToggleCard(card)}
+                onNavigate={onNavigate}
+              />
+            )
+          })}
         </div>
       </div>
     </div>

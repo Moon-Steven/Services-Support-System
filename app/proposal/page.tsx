@@ -73,9 +73,9 @@ export default function ProposalPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-20-bold" style={{ color: 'var(--grey-01)' }}>投放提案报告</h1>
+          <h1 className="text-20-bold" style={{ color: 'var(--grey-01)' }}>测试期投放提案</h1>
           <p className="text-12-regular" style={{ color: 'var(--grey-06)', marginTop: 4 }}>
-            自动生成 · 审核推送 · 面客展示
+            交付提交 · 行业运营审核 · 客户推送
           </p>
         </div>
         <div className="flex items-center" style={{ gap: 12 }}>
@@ -108,7 +108,7 @@ export default function ProposalPage() {
             <div className="text-14-bold" style={{ color: 'var(--grey-01)', marginBottom: 16 }}>报告配置</div>
             <div className="flex flex-col" style={{ gap: 12 }}>
               <Select label="目标客户" options={clientOptions} defaultValue="wavebone" />
-              <Select label="报告类型" options={reportTypeOptions} defaultValue="first" />
+              <Select label="报告类型" options={reportTypeOptions} defaultValue="test" />
               <div>
                 <div className="text-12-medium" style={{ color: 'var(--grey-06)', marginBottom: 4 }}>投放渠道</div>
                 <div className="flex" style={{ flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
@@ -165,8 +165,8 @@ export default function ProposalPage() {
                   </svg>
                 </div>
                 <div>
-                  <div className="text-12-medium" style={{ color: 'var(--grey-01)' }}>投手审核</div>
-                  <div className="text-12-regular" style={{ color: 'var(--l-cyan)' }}>罗依桐 已通过</div>
+                  <div className="text-12-medium" style={{ color: 'var(--grey-01)' }}>交付提交</div>
+                  <div className="text-12-regular" style={{ color: 'var(--l-cyan)' }}>明虎 已提交</div>
                 </div>
               </div>
               {/* Step 2: pending */}
@@ -185,8 +185,8 @@ export default function ProposalPage() {
                   <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'var(--orange)' }} />
                 </div>
                 <div>
-                  <div className="text-12-medium" style={{ color: 'var(--grey-01)' }}>销售审核</div>
-                  <div className="text-12-regular" style={{ color: 'var(--orange)' }}>王斯琼 待审核</div>
+                  <div className="text-12-medium" style={{ color: 'var(--grey-01)' }}>行业运营审核</div>
+                  <div className="text-12-regular" style={{ color: 'var(--orange)' }}>郭晋光 待审核</div>
                 </div>
               </div>
               {/* Step 3: waiting */}
@@ -205,7 +205,7 @@ export default function ProposalPage() {
                   <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'var(--grey-08)' }} />
                 </div>
                 <div>
-                  <div className="text-12-medium" style={{ color: 'var(--grey-08)' }}>推送 Lanbow</div>
+                  <div className="text-12-medium" style={{ color: 'var(--grey-08)' }}>推送客户</div>
                   <div className="text-12-regular" style={{ color: 'var(--grey-08)' }}>等待审核完成</div>
                 </div>
               </div>
@@ -227,7 +227,7 @@ export default function ProposalPage() {
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-10-regular" style={{ opacity: 0.6, textTransform: 'uppercase', letterSpacing: 1 }}>
-                  投放提案报告
+                  测试期投放提案
                 </div>
                 <h2 style={{ fontSize: 22, fontWeight: 700, marginTop: 8 }}>Wavebone 海外获客方案</h2>
                 <div className="text-12-regular" style={{ opacity: 0.7, marginTop: 4 }}>
@@ -492,18 +492,18 @@ export default function ProposalPage() {
       {/* Approval Modal */}
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)} title="提交审核">
         <p className="text-12-regular" style={{ color: 'var(--grey-06)', marginBottom: 16 }}>
-          报告将发送给投手和销售审核，审核通过后自动推送至 Lanbow
+          提案将由交付提交，行业运营审核通过后自动推送至客户
         </p>
         <div className="flex flex-col" style={{ gap: 12 }}>
           <Select
-            label="投手审核人"
-            options={[{ value: 'lyt', label: '罗依桐' }]}
-            defaultValue="lyt"
+            label="交付提交人"
+            options={[{ value: 'mh', label: '明虎' }]}
+            defaultValue="mh"
           />
           <Select
-            label="销售审核人"
-            options={[{ value: 'wsq', label: '王斯琼' }]}
-            defaultValue="wsq"
+            label="行业运营审核人"
+            options={[{ value: 'gjg', label: '郭晋光' }]}
+            defaultValue="gjg"
           />
           <div>
             <div className="text-12-medium" style={{ color: 'var(--grey-06)', marginBottom: 4 }}>备注</div>
