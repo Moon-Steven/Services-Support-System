@@ -5,27 +5,18 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
   LineElement,
   PointElement,
+  Filler,
   Tooltip,
   Legend,
   type ChartData,
   type ChartOptions,
 } from 'chart.js'
-import { Bar } from 'react-chartjs-2'
+import { Line } from 'react-chartjs-2'
 import { Card } from '@/components/ui/Card'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend)
-
-/* Chart color constants from CSS variables */
-const CHART_COLORS = {
-  dark: '#181818',       /* var(--grey-01) */
-  cyan: '#00B1A2',       /* var(--l-cyan) */
-  label: '#626262',      /* var(--grey-06) */
-  tick: '#999999',       /* var(--grey-08) */
-  gridLine: 'rgba(0,0,0,0.1)', /* var(--grid-line) */
-} as const
+ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Filler, Tooltip, Legend)
 
 interface SpendInstallChartProps {
   days: string[]
@@ -34,51 +25,76 @@ interface SpendInstallChartProps {
 }
 
 export function SpendInstallChart({ days, spend, installs }: SpendInstallChartProps) {
-  const combinedData = useMemo<ChartData<'bar', number[], string>>(() => ({
+  const totalSpend = spend.reduce((a, b) => a + b, 0)
+  const totalInstalls = installs.reduce((a, b) => a + b, 0)
+
+  const chartData = useMemo<ChartData<'line', number[], string>>(() => ({
     labels: days,
     datasets: [
       {
         label: '花费 ($)',
         data: spend,
-        backgroundColor: CHART_COLORS.dark,
-        borderColor: CHART_COLORS.dark,
-        borderWidth: 0,
-        borderRadius: 4,
+        borderColor: '#181818',
+        backgroundColor: 'rgba(24,24,24,0.12)',
+        borderWidth: 2,
+        pointRadius: spend.map((_, i) => i === spend.length - 1 ? 4 : 0),
+        pointHoverRadius: 5,
+        pointBackgroundColor: '#181818',
+        fill: true,
+        tension: 0.4,
         yAxisID: 'y',
       },
       {
         label: '安装量',
         data: installs,
-        type: 'line' as const,
-        borderColor: CHART_COLORS.cyan,
-        backgroundColor: 'transparent',
+        borderColor: '#00B1A2',
+        backgroundColor: 'rgba(0,177,162,0.10)',
         borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: CHART_COLORS.cyan,
-        fill: false,
-        tension: 0.3,
+        pointRadius: installs.map((_, i) => i === installs.length - 1 ? 4 : 0),
+        pointHoverRadius: 5,
+        pointBackgroundColor: '#00B1A2',
+        fill: true,
+        tension: 0.4,
         yAxisID: 'y1',
-      } as unknown as ChartData<'bar', number[], string>['datasets'][0],
+      },
     ],
   }), [days, spend, installs])
 
-  const options: ChartOptions<'bar'> = {
+  const options: ChartOptions<'line'> = {
     responsive: true,
+    maintainAspectRatio: false,
     interaction: { mode: 'index' as const, intersect: false },
     plugins: {
-      legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, color: CHART_COLORS.label } },
+      legend: {
+        position: 'bottom',
+        labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: 'circle', font: { size: 11 }, color: '#626262', padding: 16 },
+      },
     },
     scales: {
-      y: { position: 'left', grid: { color: CHART_COLORS.gridLine }, ticks: { font: { size: 10 }, color: CHART_COLORS.tick, callback: (v) => '$' + v } },
-      y1: { position: 'right', grid: { display: false }, ticks: { font: { size: 10 }, color: CHART_COLORS.tick } },
-      x: { grid: { display: false }, ticks: { font: { size: 10 }, color: CHART_COLORS.tick } },
+      y: { position: 'left', grid: { color: 'rgba(0,0,0,0.04)' }, border: { display: false }, ticks: { font: { size: 10 }, color: '#999', callback: (v) => '$' + v } },
+      y1: { position: 'right', grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 }, color: '#999' } },
+      x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 }, color: '#999' } },
     },
   }
 
   return (
     <Card>
-      <h3 className="text-14-bold mb-[var(--space-4)]">花费 & 安装量趋势</h3>
-      <Bar data={combinedData} options={options} height={200} />
+      <div className="flex items-start justify-between mb-[var(--space-4)]">
+        <h3 className="text-14-bold">花费 & 安装量趋势</h3>
+        <div className="flex items-center gap-[var(--space-4)]">
+          <div className="text-right">
+            <div className="text-10-regular text-grey-08">总花费</div>
+            <div className="text-14-bold text-grey-01">${totalSpend.toLocaleString()}</div>
+          </div>
+          <div className="text-right">
+            <div className="text-10-regular text-grey-08">总安装</div>
+            <div className="text-14-bold text-l-cyan">{totalInstalls.toLocaleString()}</div>
+          </div>
+        </div>
+      </div>
+      <div style={{ height: 200 }}>
+        <Line data={chartData} options={options} />
+      </div>
     </Card>
   )
 }

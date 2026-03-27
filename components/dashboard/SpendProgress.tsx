@@ -36,8 +36,10 @@ export function SpendProgress({ totalSpend, budget, dailySpend, labels, daysElap
       backgroundColor: 'rgba(0,177,162,0.08)',
       borderWidth: 2,
       pointRadius: 0,
+      pointHoverRadius: 4,
+      pointBackgroundColor: '#00B1A2',
       fill: true,
-      tension: 0.3,
+      tension: 0.4,
     }],
   }), [labels, dailySpend])
 
@@ -46,7 +48,7 @@ export function SpendProgress({ totalSpend, budget, dailySpend, labels, daysElap
     maintainAspectRatio: false,
     plugins: { legend: { display: false }, tooltip: { enabled: true } },
     scales: {
-      x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#999' } },
+      x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 }, color: '#999' } },
       y: { display: false },
     },
   }
@@ -55,10 +57,10 @@ export function SpendProgress({ totalSpend, budget, dailySpend, labels, daysElap
     <Card>
       <div className="flex items-start justify-between mb-[var(--space-3)]">
         <div>
-          <div className="text-12-regular text-grey-08">Spend Progress</div>
+          <div className="text-12-regular text-grey-08">消耗进度</div>
           <div className="flex items-baseline gap-[var(--space-2)] mt-1">
             <span className="text-24-bold text-l-cyan">${totalSpend.toLocaleString()}</span>
-            <span className="text-14-regular text-grey-08">/${budget.toLocaleString()}</span>
+            <span className="text-14-regular text-grey-08">/ ${budget.toLocaleString()}</span>
           </div>
         </div>
         <span className="text-12-medium text-grey-06">{pct}%</span>
@@ -69,16 +71,16 @@ export function SpendProgress({ totalSpend, budget, dailySpend, labels, daysElap
       {/* Time Elapsed */}
       <div className="mt-[var(--space-3)] pt-[var(--space-3)] border-t border-stroke">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-10-regular text-grey-08">Time Elapsed</span>
-          <span className="text-10-regular text-grey-06">{daysElapsed}/{totalDays} days</span>
+          <span className="text-10-regular text-grey-08">时间进度</span>
+          <span className="text-10-regular text-grey-06">{daysElapsed}/{totalDays} 天</span>
         </div>
         <div className="flex gap-[2px]">
           <div className="h-[6px] rounded-l-full bg-l-cyan transition-all" style={{ width: `${timePct}%` }} />
           <div className="h-[6px] rounded-r-full bg-orange transition-all" style={{ width: `${100 - timePct}%` }} />
         </div>
         <div className="flex justify-between mt-[2px]">
-          <span className="text-10-regular text-l-cyan">Spend Progress</span>
-          <span className="text-10-regular text-orange">Time Elapsed</span>
+          <span className="text-10-regular text-l-cyan">消耗进度</span>
+          <span className="text-10-regular text-orange">时间进度</span>
         </div>
       </div>
     </Card>
