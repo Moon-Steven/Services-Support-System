@@ -168,7 +168,7 @@ export default function ClientDetailPage() {
           {proposal && (
             <Card>
               <div className="flex items-center justify-between mb-[var(--space-2)]">
-                <div className="text-14-bold text-grey-01">投放提案</div>
+                <div className="text-14-bold text-grey-01">测试期投放计划</div>
                 <Link href={`/proposal?client=${id}`} className="text-12-regular text-l-cyan hover:underline">
                   查看详情
                 </Link>

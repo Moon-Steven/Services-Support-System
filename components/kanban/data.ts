@@ -162,7 +162,7 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '负责人', value: '郭晋光' },
       ],
       actions: [
-        { label: '投放提案', type: 'link', href: '/proposal?client=travelgo' },
+        { label: '测试期投放计划', type: 'link', href: '/proposal?client=travelgo' },
       ],
     },
     {
@@ -400,7 +400,7 @@ export const kanbanCards: Record<number, CardData[]> = {
         { label: '拟定月预算', value: '$40,000' },
       ],
       actions: [
-        { label: '投放提案', type: 'link', href: '/proposal?client=wavebone' },
+        { label: '测试期投放计划', type: 'link', href: '/proposal?client=wavebone' },
         { label: '评级变更', type: 'link', href: '/client/wavebone' },
       ],
     },

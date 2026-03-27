@@ -1235,7 +1235,7 @@ export const clientPerformance: ClientPerformance[] = [
   },
 ]
 
-/* ── Client Proposal (投放提案) ── */
+/* ── Client Proposal (测试期投放计划) ── */
 export type ProposalStatus = '草稿' | '待审核' | '已确认' | '执行中' | '已归档'
 
 export type ClientProposal = {
@@ -1277,7 +1277,7 @@ export const clientProposals: ClientProposal[] = [
     createdBy: '陶阳阳', createdAt: '2026-03-16', updatedAt: '2026-03-18',
   },
   {
-    id: 'P-2026-004', clientId: 'gameon', title: 'GameOn 游戏 续约投放提案',
+    id: 'P-2026-004', clientId: 'gameon', title: 'GameOn 游戏 续约投放计划',
     type: '续约提案', status: '已确认', channels: ['Meta', 'TikTok', 'Google Ads'], budget: 30000,
     period: '2026-04-01 ~ 2026-04-30', kpiTargets: { cpa: 3.00, roas: 200, installs: 10000 },
     strategies: ['CG 预告视频获客', 'LAL 付费玩家', 'Google UAC 自动化'],
@@ -1305,7 +1305,7 @@ export const clientProposals: ClientProposal[] = [
     createdBy: '陶阳阳', createdAt: '2026-03-17', updatedAt: '2026-03-18',
   },
   {
-    id: 'P-2026-008', clientId: 'readnow', title: 'ReadNow 阅读 APP 投放提案',
+    id: 'P-2026-008', clientId: 'readnow', title: 'ReadNow 阅读 APP 投放计划',
     type: '首次投放', status: '待审核', channels: ['Meta', 'TikTok'], budget: 20000,
     period: '2026-04-01 ~ 2026-04-14', kpiTargets: { cpa: 3.00, roas: 180, installs: 6500 },
     strategies: ['LAL 阅读用户', '书单推荐内容', 'Reels 短视频'],

@@ -15,7 +15,7 @@ const clientOptions = [
 ]
 
 const reportTypeOptions = [
-  { value: 'first', label: '首次投放提案' },
+  { value: 'first', label: '首次投放计划' },
   { value: 'test', label: '测试期阶段报告' },
   { value: 'renew', label: '续约提案' },
 ]
@@ -73,7 +73,7 @@ export default function ProposalPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-20-bold" style={{ color: 'var(--grey-01)' }}>测试期投放提案</h1>
+          <h1 className="text-20-bold" style={{ color: 'var(--grey-01)' }}>测试期投放计划</h1>
           <p className="text-12-regular" style={{ color: 'var(--grey-06)', marginTop: 4 }}>
             交付提交 · 行业运营审核 · 客户推送
           </p>
@@ -227,7 +227,7 @@ export default function ProposalPage() {
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-10-regular" style={{ opacity: 0.6, textTransform: 'uppercase', letterSpacing: 1 }}>
-                  测试期投放提案
+                  测试期投放计划
                 </div>
                 <h2 style={{ fontSize: 22, fontWeight: 700, marginTop: 8 }}>Wavebone 海外获客方案</h2>
                 <div className="text-12-regular" style={{ opacity: 0.7, marginTop: 4 }}>

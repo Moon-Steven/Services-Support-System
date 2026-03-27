@@ -57,36 +57,27 @@ function IOOrdersPageContent() {
   }), [])
 
   return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-[var(--space-5)]">
-        <div>
-          <h1 className="text-24-bold text-grey-01">IO 单管理</h1>
-          <p className="text-14-regular text-grey-08 mt-[var(--space-1)]">
-            管理所有客户的投放订单、变更需求与终止合作
-          </p>
+    <div className="flex flex-col gap-[var(--space-3)]">
+      {/* ── Header: title + inline stats + button ── */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-[var(--space-5)]">
+          <h1 className="text-20-bold text-grey-01">IO 单管理</h1>
+          <div className="flex items-center gap-[var(--space-3)] text-12-regular">
+            <span className="text-grey-08">全部 <span className="text-14-bold text-grey-01">{stats.total}</span></span>
+            <span className="w-[1px] h-[12px] bg-stroke" />
+            <span className="text-grey-08">审批中 <span className="text-14-bold text-orange">{stats.pending}</span></span>
+            <span className="w-[1px] h-[12px] bg-stroke" />
+            <span className="text-grey-08">投放中 <span className="text-14-bold text-l-cyan">{stats.active}</span></span>
+            <span className="w-[1px] h-[12px] bg-stroke" />
+            <span className="text-grey-08">总金额 <span className="text-14-bold text-grey-01">${stats.totalAmount.toLocaleString()}</span></span>
+          </div>
         </div>
         <Button onClick={() => router.push(presetClient ? `/io-orders/new?client=${presetClient}` : '/io-orders/new')}>+ 新建 IO 单</Button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-[var(--space-3)] mb-[var(--space-4)]">
-        {[
-          { label: '全部 IO 单', value: stats.total, color: 'text-grey-01' },
-          { label: '审批中', value: stats.pending, color: 'text-orange' },
-          { label: '投放中', value: stats.active, color: 'text-l-cyan' },
-          { label: '总金额', value: `$${stats.totalAmount.toLocaleString()}`, color: 'text-grey-01' },
-        ].map((s) => (
-          <Card key={s.label}>
-            <div className="text-12-regular text-grey-08">{s.label}</div>
-            <div className={`text-20-bold ${s.color} mt-1`}>{s.value}</div>
-          </Card>
-        ))}
-      </div>
-
-      {/* Filters */}
-      <div className="flex items-center gap-[var(--space-3)] mb-[var(--space-4)]">
-        <div className="relative flex-1 max-w-[240px]">
+      {/* ── Filters ── */}
+      <div className="flex items-center gap-[var(--space-3)]">
+        <div className="relative flex-1 max-w-[200px]">
           <svg
             className="absolute left-2.5 top-1/2 -translate-y-1/2 text-grey-08 pointer-events-none"
             width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -98,33 +89,34 @@ function IOOrdersPageContent() {
             placeholder="搜索 IO 单号或客户..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="!pl-[28px] !h-[32px] !text-[12px] !rounded-full"
+            className="!pl-[28px] !h-[30px] !text-[12px] !rounded-full"
           />
         </div>
-        <div className="flex gap-[var(--space-2)]">
+        <div className="flex gap-[var(--space-1)]">
           {['全部', '审批中', '待打款', '投放中', '已完成'].map((s) => (
             <button
               key={s}
               onClick={() => setFilterStatus(s)}
-              className={`px-[var(--space-3)] py-[5px] rounded-full text-12-medium border-none cursor-pointer transition-colors font-[inherit] ${
+              className={`px-[var(--space-2)] py-[4px] rounded-full text-12-medium border-none cursor-pointer transition-colors font-[inherit] ${
                 filterStatus === s
                   ? 'bg-grey-01 text-white'
-                  : 'bg-selected text-grey-06 hover:bg-grey-12'
+                  : 'bg-transparent text-grey-06 hover:bg-grey-12'
               }`}
             >
               {s}
             </button>
           ))}
         </div>
-        <div className="flex gap-[var(--space-2)]">
+        <span className="w-[1px] h-[16px] bg-stroke" />
+        <div className="flex gap-[var(--space-1)]">
           {['全部', '新建投放', '变更需求', '终止合作'].map((t) => (
             <button
               key={t}
               onClick={() => setFilterType(t)}
-              className={`px-[var(--space-3)] py-[5px] rounded-full text-12-medium border-none cursor-pointer transition-colors font-[inherit] ${
+              className={`px-[var(--space-2)] py-[4px] rounded-full text-12-medium border-none cursor-pointer transition-colors font-[inherit] ${
                 filterType === t
                   ? 'bg-grey-01 text-white'
-                  : 'bg-selected text-grey-06 hover:bg-grey-12'
+                  : 'bg-transparent text-grey-06 hover:bg-grey-12'
               }`}
             >
               {t}
@@ -133,78 +125,55 @@ function IOOrdersPageContent() {
         </div>
       </div>
 
-      {/* Order List */}
-      <div className="flex flex-col gap-[var(--space-2)]">
+      {/* ── Order List ── */}
+      <Card padding="none" className="overflow-hidden">
         {filtered.length === 0 ? (
-          <Card className="text-center py-[var(--space-8)]">
+          <div className="text-center py-[var(--space-6)]">
             <p className="text-14-regular text-grey-08">暂无匹配的 IO 单</p>
-          </Card>
+          </div>
         ) : (
-          filtered.map((order) => (
-            <Card
+          filtered.map((order, idx) => (
+            <div
               key={order.id}
-              padding="standard"
-              className="cursor-pointer hover:bg-selected transition-colors"
+              className={`flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] cursor-pointer hover:bg-selected transition-colors ${
+                idx < filtered.length - 1 ? 'border-b border-stroke' : ''
+              }`}
               onClick={() => setSelectedOrder(order)}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-[var(--space-3)]">
-                  <Avatar name={order.clientName[0]} size="sm" />
-                  <div>
-                    <div className="flex items-center gap-[var(--space-2)]">
-                      <span className="text-14-bold text-grey-01">{order.id}</span>
-                      <Badge variant={typeVariant(order.type)}>{order.type}</Badge>
-                      <Badge variant={statusVariant(order.status)}>{order.status}</Badge>
-                    </div>
-                    <div className="flex items-center gap-[var(--space-4)] mt-[2px] text-12-regular text-grey-08">
-                      <a
-                        href={`/client/${order.clientId}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-grey-01 hover:text-l-cyan hover:underline transition-colors"
-                      >
-                        {order.clientName}
-                      </a>
-                      <span>{order.period}</span>
-                      <span>{order.channels.join(' / ')}</span>
-                    </div>
-                  </div>
+              {/* Left: avatar + IO info */}
+              <Avatar name={order.clientName[0]} size="sm" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-[var(--space-2)]">
+                  <span className="text-12-bold text-grey-01">{order.id}</span>
+                  <Badge variant={typeVariant(order.type)}>{order.type}</Badge>
+                  <Badge variant={statusVariant(order.status)}>{order.status}</Badge>
                 </div>
-                <div className="text-right">
-                  <div className="text-16-bold text-grey-01">${order.amount.toLocaleString()}</div>
-                  <div className="text-10-regular text-grey-08">{order.createdBy} · {order.createdAt}</div>
+                <div className="flex items-center gap-[var(--space-2)] mt-[2px] text-12-regular text-grey-08">
+                  <a
+                    href={`/client/${order.clientId}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-grey-06 hover:text-l-cyan hover:underline transition-colors"
+                  >
+                    {order.clientName}
+                  </a>
+                  <span>·</span>
+                  <span>{order.channels.join(' / ')}</span>
+                  <span>·</span>
+                  <span>{order.period}</span>
                 </div>
               </div>
 
-              {/* Approval Progress */}
-              <div className="mt-[var(--space-2)] pt-[var(--space-2)] border-t border-stroke">
-                {order.fullApprovalChain ? (
-                  <ApprovalChain steps={order.fullApprovalChain} />
-                ) : (
-                  <div className="flex items-center gap-[var(--space-3)]">
-                    {order.approvals.map((a, i) => (
-                      <div key={i} className="flex items-center gap-[var(--space-1)]">
-                        <span className={`w-[6px] h-[6px] rounded-full ${
-                          a.status === 'approved' ? 'bg-l-cyan'
-                            : a.status === 'rejected' ? 'bg-red'
-                              : 'bg-grey-12'
-                        }`} />
-                        <span className="text-12-regular text-grey-06">
-                          {a.role}：{a.person}
-                        </span>
-                        {i < order.approvals.length - 1 && (
-                          <span className="text-grey-08 mx-0.5">→</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
+              {/* Right: amount + submitter */}
+              <div className="text-right shrink-0">
+                <div className="text-14-bold text-grey-01">${order.amount.toLocaleString()}</div>
+                <div className="text-10-regular text-grey-08">{order.createdBy} · {order.createdAt}</div>
               </div>
-            </Card>
+            </div>
           ))
         )}
-      </div>
+      </Card>
 
-      {/* Order Detail Dialog */}
+      {/* ── Order Detail Dialog ── */}
       {selectedOrder && (
         <Dialog
           open={!!selectedOrder}

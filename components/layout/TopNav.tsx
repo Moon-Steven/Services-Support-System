@@ -13,7 +13,7 @@ const titleMap: Record<string, string> = {
   '/io-orders/new': 'IO 确认单',
   '/dashboard': '投放数据',
   '/assets': '资产管理',
-  '/proposal': '投放提案',
+  '/proposal': '测试期投放计划',
   '/changes': '变更管理',
   '/finance': '财务工作台',
   '/permissions': '权限配置',

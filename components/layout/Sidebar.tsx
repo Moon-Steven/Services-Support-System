@@ -42,7 +42,7 @@ const navGroups: NavGroup[] = [
     items: [
       { name: 'IO 单管理', href: '/io-orders', icon: IconFileText },
       { name: '投放数据', href: '/dashboard', icon: IconChart },
-      { name: '投放提案', href: '/proposal', icon: IconDoc },
+      { name: '测试期投放计划', href: '/proposal', icon: IconDoc },
     ],
   },
   {
