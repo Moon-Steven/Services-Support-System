@@ -84,8 +84,9 @@ function DashboardInner() {
 
       <KpiCards kpis={kpis} />
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-2 gap-[var(--space-5)] mb-[var(--space-6)]">
+      {/* Charts Row: Test Progress + Spend + ROI */}
+      <div className="grid grid-cols-[1fr_2fr_2fr] gap-[var(--space-5)] mb-[var(--space-6)]">
+        <TestProgress />
         <SpendProgress
           totalSpend={248900}
           budget={500000}
@@ -109,7 +110,6 @@ function DashboardInner() {
         <div className="flex flex-col gap-[var(--space-5)]">
           <CreativeTop creatives={creatives} />
           <StrategyTimeline notes={strategyNotes} />
-          <TestProgress />
         </div>
       </div>
     </div>
