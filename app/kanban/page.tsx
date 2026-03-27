@@ -255,6 +255,15 @@ export default function KanbanPage() {
                 </span>
               </div>
             </div>
+            <button
+              onClick={() => navigateToClient(drawerClientId!, `client/${drawerClientId}`)}
+              className="shrink-0 inline-flex items-center gap-1 px-[var(--space-3)] py-[var(--space-1-5)] rounded-lg text-12-bold text-l-cyan bg-cyan-tint-08 hover:bg-cyan-tint-12 border border-l-cyan/20 cursor-pointer font-[inherit] transition-colors"
+            >
+              查看详情
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 4l4 4-4 4" />
+              </svg>
+            </button>
           </div>
         ) : undefined}
       >
@@ -272,16 +281,6 @@ export default function KanbanPage() {
               />
             ))}
 
-            {/* ── Quick Navigate to Client ── */}
-            <button
-              onClick={() => navigateToClient(drawerClientId!, `client/${drawerClientId}`)}
-              className="w-full py-[var(--space-3)] rounded-lg text-14-bold text-l-cyan bg-cyan-tint-08 hover:bg-cyan-tint-12 border border-l-cyan/20 cursor-pointer font-[inherit] transition-colors flex items-center justify-center gap-2"
-            >
-              查看客户详情
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 4l4 4-4 4" />
-              </svg>
-            </button>
           </div>
         )}
       </Drawer>
