@@ -13,6 +13,14 @@ import type { IOOrder, ChangeLog, ClockEntry, LearningNote, GradeChangeRequest }
 import { CampaignSnapshot } from '@/components/client/CampaignSnapshot'
 import { OnboardingStepper } from '@/components/client/OnboardingStepper'
 import { ApprovalChain } from '@/components/ui/ApprovalChain'
+import { CapabilityRadar } from '@/components/around-the-clock/CapabilityRadar'
+import {
+  getPersonaRadarForClient,
+  getClockEntryNarrative,
+  obfuscateForSophistication,
+  kpiRefLabel,
+  isClockOffHours,
+} from '@/lib/around-the-clock'
 
 const gradeMap: Record<string, { bg: string; text: string; border: string; label: string; glow: string }> = {
   S: { bg: 'bg-orange-tint-10', text: 'text-orange', border: 'border-orange/30', label: '战略客户', glow: 'shadow-[0_0_8px_rgba(255,160,50,0.2)]' },
@@ -48,6 +56,11 @@ export default function ClientDetailPage() {
 
   // Clock & Learning Notes data
   const clockConfig = useMemo(() => clientClockConfigs.find((c) => c.clientId === id) || null, [id])
+  const personaRadar = useMemo(() => getPersonaRadarForClient(id), [id])
+  const healthScoreM6 = useMemo(() => {
+    const h = id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0)
+    return 68 + (h % 24)
+  }, [id])
   const clientNotes = useMemo(() => learningNotes.filter((n) => n.clientId === id).sort((a, b) => b.date.localeCompare(a.date)), [id])
 
   // Grade change requests
@@ -564,23 +577,40 @@ export default function ClientDetailPage() {
             </Card>
           )}
 
+          {/* Persona capability radar (Around the Clock 联动) */}
+          <Card padding="none">
+            <div className="px-[var(--space-4)] pt-[var(--space-3)] pb-[var(--space-1)]">
+              <div className="text-12-bold text-grey-06 uppercase tracking-wide">Persona · 能力雷达</div>
+              <p className="text-10-regular text-grey-08 mt-[var(--space-1)]">与 Always On 正面叙事联动（演示）</p>
+            </div>
+            <div className="px-[var(--space-4)] pb-[var(--space-3)] flex justify-center">
+              <CapabilityRadar scores={personaRadar} />
+            </div>
+          </Card>
+
           {/* Clock Overview */}
           <Card padding="none">
-            <div className="px-[var(--space-4)] pt-[var(--space-3)] pb-[var(--space-1)] flex items-center justify-between">
-              <div className="text-12-bold text-grey-06 uppercase tracking-wide">Clock 配置</div>
-              <Link href={`/clock-config?client=${id}`} className="text-10-regular text-l-cyan hover:underline">
-                管理配置
-              </Link>
+            <div className="px-[var(--space-4)] pt-[var(--space-3)] pb-[var(--space-1)] flex items-center justify-between gap-[var(--space-2)] flex-wrap">
+              <div className="text-12-bold text-grey-06 uppercase tracking-wide">Around the Clock</div>
+              <div className="flex items-center gap-[var(--space-3)]">
+                <Link href={`/clock-config?client=${id}&tab=review`} className="text-10-regular text-l-cyan hover:underline">
+                  审核工作台
+                </Link>
+                <Link href={`/clock-config?client=${id}`} className="text-10-regular text-l-cyan hover:underline">
+                  Timeline 配置
+                </Link>
+              </div>
             </div>
             <div className="px-[var(--space-4)] pb-[var(--space-3)]">
               {clockConfig ? (() => {
                 const activeEntries = clockConfig.entries.filter((e) => e.active)
                 const toneLabel = TONE_OPTIONS.find((t) => t.value === clockConfig.tone)?.label || clockConfig.tone
                 const template = industryTemplates.find((t) => t.id === clockConfig.templateId)
+                const soph = clockConfig.clientSophistication || 'standard'
                 return (
                   <>
                     {/* Stats row */}
-                    <div className="grid grid-cols-3 gap-[var(--space-2)] mb-[var(--space-2)]">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-[var(--space-2)] mb-[var(--space-2)]">
                       <div className="bg-bg rounded-md px-[var(--space-2)] py-[var(--space-1)] text-center">
                         <div className="text-14-bold text-grey-01">{clockConfig.entries.length}</div>
                         <div className="text-10-regular text-grey-08">总条目</div>
@@ -588,6 +618,10 @@ export default function ClientDetailPage() {
                       <div className="bg-bg rounded-md px-[var(--space-2)] py-[var(--space-1)] text-center">
                         <div className="text-14-bold text-l-cyan">{activeEntries.length}</div>
                         <div className="text-10-regular text-grey-08">已启用</div>
+                      </div>
+                      <div className="bg-bg rounded-md px-[var(--space-2)] py-[var(--space-1)] text-center">
+                        <div className="text-14-bold text-l-cyan">{healthScoreM6}</div>
+                        <div className="text-10-regular text-grey-08">健康分 M6</div>
                       </div>
                       <div className="bg-bg rounded-md px-[var(--space-2)] py-[var(--space-1)] text-center">
                         <div className="text-14-bold text-grey-01">{toneLabel}</div>
@@ -599,18 +633,39 @@ export default function ClientDetailPage() {
 
                     {/* Mini timeline preview — top 4 entries */}
                     <div className="flex flex-col gap-[6px] pt-[var(--space-2)]">
-                      {activeEntries.slice(0, 4).map((entry) => (
-                        <div key={entry.id} className="flex items-center gap-[var(--space-2)]">
-                          <span className="text-12-bold text-grey-06 w-[38px] shrink-0">{entry.time}</span>
-                          <span className={`inline-flex items-center px-[5px] py-[1px] rounded text-10-regular ${
-                            entry.category === 'Bidding' ? 'bg-cyan-tint-08 text-l-cyan'
-                              : entry.category === 'Creative' ? 'bg-orange-tint-10 text-orange'
-                                : entry.category === 'Monitor' ? 'bg-selected text-grey-06'
-                                  : 'bg-bg text-grey-06'
-                          }`}>{entry.category}</span>
-                          <span className="text-12-regular text-grey-08 truncate flex-1">{entry.description}</span>
-                        </div>
-                      ))}
+                      {activeEntries.slice(0, 4).map((entry) => {
+                        const nar = getClockEntryNarrative(entry)
+                        const line = obfuscateForSophistication(
+                          `${nar.signal} → ${nar.action}`,
+                          soph
+                        )
+                        return (
+                          <div key={entry.id} className="flex items-start gap-[var(--space-2)]">
+                            <div className="w-[40px] shrink-0">
+                              <span className="text-12-bold text-grey-06 block">{entry.time}</span>
+                              {isClockOffHours(entry.time) && (
+                                <span className="text-10-regular text-orange">非办公</span>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-[4px] mb-[2px]">
+                                <span className={`inline-flex items-center px-[5px] py-[1px] rounded text-10-regular ${
+                                  entry.category === 'Bidding' ? 'bg-cyan-tint-08 text-l-cyan'
+                                    : entry.category === 'Creative' ? 'bg-orange-tint-10 text-orange'
+                                      : entry.category === 'Monitor' ? 'bg-selected text-grey-06'
+                                        : 'bg-bg text-grey-06'
+                                }`}>{entry.category}</span>
+                                {entry.kpiRefs?.map((k) => (
+                                  <span key={k} className="text-10-medium text-l-cyan bg-cyan-tint-08 px-[4px] py-[1px] rounded">
+                                    {kpiRefLabel(k)}
+                                  </span>
+                                ))}
+                              </div>
+                              <span className="text-12-regular text-grey-08 line-clamp-2">{line}</span>
+                            </div>
+                          </div>
+                        )
+                      })}
                       {activeEntries.length > 4 && (
                         <div className="text-10-regular text-grey-08 text-center pt-[2px]">
                           还有 {activeEntries.length - 4} 个条目...

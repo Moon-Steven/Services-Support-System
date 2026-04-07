@@ -49,7 +49,7 @@ const navGroups: NavGroup[] = [
     label: '交付运营',
     items: [
       { name: '资产管理', href: '/assets', icon: IconCard },
-      { name: 'Clock 配置', href: '/clock-config', icon: IconClock },
+      { name: 'Around the Clock', href: '/clock-config', icon: IconClock },
       { name: '学习笔记', href: '/learning-notes', icon: IconNote },
     ],
   },

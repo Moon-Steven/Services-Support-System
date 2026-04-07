@@ -95,6 +95,15 @@ export const CLOCK_CATEGORIES: ClockCategory[] = ['Bidding', 'Monitor', 'Strateg
 
 export type ClockEffectType = 'saved' | 'blocked' | 'none'
 
+export type ClockNarrativeBlock = {
+  signal: string
+  strategy: string
+  action: string
+  outcome: string
+}
+
+export type ClockKpiRef = 'B1' | 'C4' | 'M6'
+
 export type ClockEntry = {
   id: string
   time: string
@@ -103,6 +112,10 @@ export type ClockEntry = {
   effect: { type: ClockEffectType; amount?: number; currency?: string }
   active: boolean
   order: number
+  /** 对客叙事四段（可选；缺省时由 UI 从 description 推导） */
+  narrative?: ClockNarrativeBlock
+  /** 方案 KPI 映射标签 */
+  kpiRefs?: ClockKpiRef[]
 }
 
 export type ToneVariant = 'professional' | 'witty' | 'casual'
@@ -120,12 +133,16 @@ export type IndustryTemplate = {
   entries: ClockEntry[]
 }
 
+export type ClientSophistication = 'basic' | 'standard' | 'advanced'
+
 export type ClientClockConfig = {
   clientId: string
   templateId: string
   tone: ToneVariant
   entries: ClockEntry[]
   lastPublished?: string
+  /** 客户认知水平，驱动对客文案模糊化强度 */
+  clientSophistication?: ClientSophistication
 }
 
 export type NoteType = 'LIVE CAMPAIGN' | 'A/B TEST RESULT' | 'OPTIMIZATION'
@@ -181,7 +198,22 @@ export const industryTemplates: IndustryTemplate[] = [
   {
     id: 'tpl-reading', industry: '小说/阅读', name: '阅读行业标准', tone: 'witty',
     entries: [
-      { id: 'r1', time: '03:42', category: 'Monitor', description: 'Abnormal traffic alert, paused suspicious source 45min', effect: { type: 'blocked', amount: 1800, currency: '¥' }, active: true, order: 0 },
+      {
+        id: 'r1',
+        time: '03:42',
+        category: 'Monitor',
+        description: 'Abnormal traffic alert, paused suspicious source 45min',
+        effect: { type: 'blocked', amount: 1800, currency: '¥' },
+        active: true,
+        order: 0,
+        kpiRefs: ['M6'],
+        narrative: {
+          signal: '凌晨异常流量尖峰',
+          strategy: '自动风控优先于扩量',
+          action: '暂停可疑来源 45 分钟',
+          outcome: '减少无效消耗并保护账户健康度',
+        },
+      },
       { id: 'r2', time: '05:03', category: 'Monitor', description: 'Creative A3 CTR below threshold, auto-paused', effect: { type: 'none' }, active: true, order: 1 },
       { id: 'r3', time: '07:00', category: 'Strategy', description: 'Morning commute push: boosted short-form content ads', effect: { type: 'none' }, active: true, order: 2 },
       { id: 'r4', time: '09:15', category: 'Bidding', description: 'Rush hour bidding surge, switched to smart pricing', effect: { type: 'saved', amount: 3200, currency: '¥' }, active: true, order: 3 },
@@ -213,6 +245,7 @@ export const clientClockConfigs: ClientClockConfig[] = [
   {
     clientId: 'wavebone', templateId: 'tpl-reading', tone: 'witty',
     lastPublished: '2026-03-25',
+    clientSophistication: 'standard',
     entries: industryTemplates.find((t) => t.id === 'tpl-reading')!.entries,
   },
   {

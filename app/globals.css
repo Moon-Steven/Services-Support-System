@@ -201,3 +201,43 @@ body {
   color: var(--grey-01);
   background-color: var(--bg);
 }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.atc-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--grey-08);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+.atc-checkbox:checked {
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+.atc-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.atc-checkbox:hover {
+  border-color: var(--cyan);
+}
+
+.atc-row-selected {
+  background-color: color-mix(in srgb, var(--cyan) 4%, transparent);
+}

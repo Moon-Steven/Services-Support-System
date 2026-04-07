@@ -18,7 +18,7 @@ const titleMap: Record<string, string> = {
   '/finance': '财务工作台',
   '/permissions': '权限配置',
   '/approvals': '审批工作台',
-  '/clock-config': 'Clock 配置',
+  '/clock-config': 'Around the Clock',
   '/learning-notes': 'Agent 学习笔记',
 }
 
