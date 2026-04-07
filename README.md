@@ -104,5 +104,5 @@ npm start
 
 项目通过 GitHub 推送自动部署至 Vercel：
 
-- **仓库:** [github.com/Moon-Steven/Lanbow-App](https://github.com/Moon-Steven/Services-Support-System)
+- **仓库:** [github.com/Moon-Steven/Services-Support-System](https://github.com/Moon-Steven/Services-Support-System)
 - **线上地址:** [service-support-system.vercel.app](https://service-support-system.vercel.app)
