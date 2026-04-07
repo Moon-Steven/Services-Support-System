@@ -584,16 +584,17 @@ function ClockConfigPageContent() {
                               <span className="text-12-regular text-grey-08">{entryList.length} 条目</span>
                               <span className="text-12-regular text-l-cyan">{ac} 已启用</span>
                               <span className="text-12-regular text-grey-08">{toneLabel}</span>
+                              {pendingCount > 0 && (
+                                <span className="text-12-regular text-orange cursor-pointer hover:underline flex items-center gap-[3px]"
+                                  onClick={(e) => { e.stopPropagation(); setClient({ id: cl.id, name: cl.name, industry: cl.industry, grade: cl.grade }); setTopTab('review') }}>
+                                  <span className="w-[4px] h-[4px] rounded-full bg-orange" />
+                                  {pendingCount} 待审
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-[var(--space-2)]">
-                          {pendingCount > 0 && (
-                            <span className="text-10-medium text-orange bg-orange-tint-10 px-[6px] py-[1px] rounded-full cursor-pointer hover:opacity-80 transition-opacity"
-                              onClick={(e) => { e.stopPropagation(); setClient({ id: cl.id, name: cl.name, industry: cl.industry, grade: cl.grade }); setTopTab('review') }}>
-                              {pendingCount} 待审
-                            </span>
-                          )}
                           {config?.lastPublished && <span className="text-10-regular text-grey-08">发布于 {config.lastPublished}</span>}
                           {entryList.length > 0 ? <Badge variant="cyan">{ac}/{entryList.length}</Badge> : <Badge variant="grey">未配置</Badge>}
                           <svg width="16" height="16" fill="none" stroke="var(--grey-08)" strokeWidth="1.5" strokeLinecap="round" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
