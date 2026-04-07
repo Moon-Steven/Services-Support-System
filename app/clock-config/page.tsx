@@ -576,9 +576,9 @@ function ClockConfigPageContent() {
                         <div className="flex items-center gap-[var(--space-3)]">
                           <Avatar name={cl.name[0]} size="sm" />
                           <div>
-                            <div className="flex items-center gap-[var(--space-2)]">
+                            <div className="flex items-baseline gap-[6px]">
                               <span className="text-14-bold text-grey-01">{cl.name}</span>
-                              <Badge variant="grey">{cl.industry}</Badge>
+                              <span className="text-12-regular text-grey-08">{cl.industry}</span>
                             </div>
                             <div className="flex items-center gap-[var(--space-3)] mt-[2px]">
                               <span className="text-12-regular text-grey-08">{entryList.length} 条目</span>
