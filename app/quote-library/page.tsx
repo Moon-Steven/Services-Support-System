@@ -61,8 +61,7 @@ function getTop3Dimensions(aff: PersonaRadarDimensions) {
 
 function getQuoteRefs(quoteId: string) {
   const refs = clientPersonaSnapshots.filter(s => s.selectedQuoteId === quoteId)
-  const locked = refs.filter(s => s.lockStatus === 'locked')
-  return { total: refs.length, locked: locked.length, clients: refs }
+  return { total: refs.length, clients: refs }
 }
 
 const EMPTY_DIMS: PersonaRadarDimensions = {
@@ -141,10 +140,15 @@ export default function QuoteLibraryPage() {
     return list
   }, [statusFilter, industryFilter, languageFilter, searchQuery])
 
+  const hasActiveFilters = statusFilter !== 'all' || !!industryFilter || !!languageFilter || !!searchQuery.trim()
+
   return (
     <div className="flex flex-col gap-[var(--space-6)] p-[var(--space-6)]">
       <div className="flex items-center justify-between">
-        <h1 className="text-24-bold text-grey-01">名言库管理</h1>
+        <div className="flex flex-col gap-[var(--space-1)]">
+          <h1 className="text-24-bold text-grey-01">名言库管理</h1>
+          <p className="text-12-regular text-grey-08">先筛选后批量处理，保证名言与客户场景一致。</p>
+        </div>
         <Button onClick={() => setShowCreateDialog(true)}>录入名言</Button>
       </div>
 
@@ -179,6 +183,23 @@ export default function QuoteLibraryPage() {
               onChange={(e) => setLanguageFilter(e.target.value)}
             />
           </div>
+          <span className="text-12-regular text-grey-08">
+            结果 {filtered.length} 条
+          </span>
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              className="!h-8 !px-3 text-12-medium"
+              onClick={() => {
+                setStatusFilter('all')
+                setSearchQuery('')
+                setIndustryFilter('')
+                setLanguageFilter('')
+              }}
+            >
+              清除筛选
+            </Button>
+          )}
         </div>
 
         <div className="overflow-x-auto">
@@ -236,14 +257,7 @@ export default function QuoteLibraryPage() {
                       </Badge>
                     </td>
                     <td className="px-[var(--space-3)] py-[var(--space-4)] text-12-regular text-grey-06">
-                      {refs.total > 0 ? (
-                        <>
-                          {refs.total}
-                          {refs.locked > 0 && (
-                            <span className="text-orange ml-1">(已锁定)</span>
-                          )}
-                        </>
-                      ) : '—'}
+                      {refs.total > 0 ? refs.total : '—'}
                     </td>
                     <td className="px-[var(--space-5)] py-[var(--space-4)] text-right">
                       <div className="flex items-center justify-end gap-[var(--space-2)]">
@@ -531,15 +545,15 @@ function RetireDialog({
         {retireType === 'safety' && (
           <div className="rounded-lg bg-orange-tint-10 p-[var(--space-3)]">
             <p className="text-12-medium text-orange">
-              ⚠ 将强制解锁 {refs.locked} 个引用此名言的客户
+              ⚠ 将触发 {refs.total} 个引用该名言的客户重新匹配
             </p>
             {refs.clients.length > 0 && (
               <ul className="mt-[var(--space-2)] text-12-regular text-grey-06 list-disc pl-[var(--space-4)]">
                 {refs.clients.map(c => (
                   <li key={c.clientId}>
                     {c.clientId}
-                    {c.lockStatus === 'locked' && (
-                      <span className="text-orange ml-1">(已锁定)</span>
+                    {c.lockStatus === 'in_review' && (
+                      <span className="text-orange ml-1">(审核中)</span>
                     )}
                   </li>
                 ))}

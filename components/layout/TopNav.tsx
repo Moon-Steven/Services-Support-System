@@ -20,6 +20,8 @@ const titleMap: Record<string, string> = {
   '/approvals': '审批工作台',
   '/clock-config': 'Around the Clock',
   '/learning-notes': 'Agent 学习笔记',
+  '/persona-review': 'Persona',
+  '/persona-overview': 'Persona',
 }
 
 export function TopNav() {
@@ -27,7 +29,7 @@ export function TopNav() {
   const { client, setClient } = useClient()
 
   const title = titleMap[pathname]
-    || (pathname.startsWith('/client/') ? '客户详情' : 'Lanbow 3.0')
+    || (pathname.startsWith('/client/') ? '客户详情' : '')
 
   const handleClientChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = clients.find((c) => c.id === e.target.value)

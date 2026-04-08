@@ -1,17 +1,19 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Drawer } from '@/components/ui/Drawer'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
 import { Input } from '@/components/ui/Input'
+import { Textarea } from '@/components/ui/Textarea'
 import type { PersonaSnapshot, ReviewStage } from '@/lib/around-the-clock'
 import {
-  getPersonaQuoteById, getAvailableQuotes, PERSONA_LOCK_STATUS_LABEL,
+  getPersonaQuoteById, getAvailableQuotes,
   REVIEW_STAGE_LABEL, DIMENSION_KEYS, DIMENSION_LABELS,
-  isRejectedTask, matchQuoteForRadar,
+  isRejectedTask, getPersonaAuditTrail,
   ATC_REVIEW_EVENTS_SEED,
 } from '@/lib/around-the-clock'
 import { clients } from '@/lib/data'
@@ -21,10 +23,11 @@ interface PersonaReviewDrawerProps {
   snapshot: PersonaSnapshot | null
   open: boolean
   onClose: () => void
-  onApprove?: (clientId: string) => void
+  onApprove?: (clientId: string, comment?: string) => void
   onReject?: (clientId: string, reason: string) => void
   onChangeQuote?: (clientId: string, newQuoteId: string, reason: string) => void
   onCopyOverride?: (clientId: string, text: string) => void
+  onAdjustRadar?: (clientId: string, nextCurrent: PersonaSnapshot['current'], reason: string) => void
   currentRole?: 'delivery' | 'ops' | 'sales'
 }
 
@@ -55,10 +58,46 @@ function formatTimestamp(iso: string) {
   return `${Number(m)}/${Number(d)} ${h}:${mi}`
 }
 
+function cosineSimilarity(
+  current: PersonaSnapshot['current'],
+  affinity: PersonaSnapshot['current'],
+): number {
+  let dot = 0
+  let normCurrent = 0
+  let normAffinity = 0
+  for (const key of DIMENSION_KEYS) {
+    const c = current[key]
+    const a = affinity[key] * 100
+    dot += c * a
+    normCurrent += c * c
+    normAffinity += a * a
+  }
+  if (normCurrent === 0 || normAffinity === 0) return 0
+  return dot / (Math.sqrt(normCurrent) * Math.sqrt(normAffinity))
+}
+
 const STAGE_BADGE_VARIANT: Record<ReviewStage, 'cyan' | 'orange' | 'grey'> = {
   at_delivery: 'cyan',
   at_ops: 'orange',
   at_sales: 'grey',
+}
+
+const AUDIT_ACTION_LABEL: Record<string, string> = {
+  created: '系统生成',
+  radar_adjust: '手动调整雷达',
+  review_pass: '审核通过',
+  review_reject: '审核驳回',
+  quote_change: '更换名言',
+  copy_override: '文案润色',
+}
+
+const TAG_LABEL: Record<string, string> = {
+  ecommerce: '电商',
+  gaming: '游戏',
+  finance: '金融',
+  healthcare: '医疗',
+  entertainment: '娱乐',
+  general: '通用',
 }
 
 export function PersonaReviewDrawer({
@@ -69,6 +108,7 @@ export function PersonaReviewDrawer({
   onReject,
   onChangeQuote,
   onCopyOverride,
+  onAdjustRadar,
   currentRole = 'delivery',
 }: PersonaReviewDrawerProps) {
   const [reviewComment, setReviewComment] = useState('')
@@ -80,6 +120,20 @@ export function PersonaReviewDrawer({
   const [changeQuoteReason, setChangeQuoteReason] = useState('')
   const [polishDialogOpen, setPolishDialogOpen] = useState(false)
   const [polishText, setPolishText] = useState('')
+  const [adjustRadarDialogOpen, setAdjustRadarDialogOpen] = useState(false)
+  const [adjustReason, setAdjustReason] = useState('')
+  const [draftRadar, setDraftRadar] = useState<PersonaSnapshot['current'] | null>(null)
+
+  useEffect(() => {
+    if (!open) return
+    setReviewComment('')
+    setRejectReason('')
+    setChangeQuoteSearch('')
+    setChangeQuoteSelected(null)
+    setChangeQuoteReason('')
+    setAdjustReason('')
+    setDraftRadar(snapshot?.current ? { ...snapshot.current } : null)
+  }, [snapshot?.clientId, open])
 
   const client = useMemo(
     () => (snapshot ? clients.find(c => c.id === snapshot.clientId) : null),
@@ -108,8 +162,8 @@ export function PersonaReviewDrawer({
     const available = getAvailableQuotes()
     return available
       .map(q => {
-        const result = matchQuoteForRadar(snapshot.current)
-        return { quote: q, matchScore: result?.quote.id === q.id ? result.matchScore : 0 }
+        const score = cosineSimilarity(snapshot.current, q.dimensionAffinity)
+        return { quote: q, matchScore: score }
       })
       .sort((a, b) => b.matchScore - a.matchScore)
   }, [snapshot])
@@ -133,12 +187,18 @@ export function PersonaReviewDrawer({
       .slice(0, 3)
   }, [quote])
 
+  const auditTrail = useMemo(() => {
+    if (!snapshot) return []
+    return getPersonaAuditTrail(snapshot.clientId).slice(0, 6)
+  }, [snapshot])
+
   if (!snapshot) return null
 
   const rejected = isRejectedTask(snapshot)
+  const topRecommendation = availableQuotesScored[0]?.quote.id ?? null
 
   const handleApprove = () => {
-    onApprove?.(snapshot.clientId)
+    onApprove?.(snapshot.clientId, reviewComment.trim() || undefined)
     onClose()
   }
 
@@ -167,14 +227,39 @@ export function PersonaReviewDrawer({
     setPolishDialogOpen(false)
   }
 
+  const handleAdjustRadarConfirm = () => {
+    if (!draftRadar || !adjustReason.trim()) return
+    onAdjustRadar?.(snapshot.clientId, draftRadar, adjustReason.trim())
+    setAdjustReason('')
+    setAdjustRadarDialogOpen(false)
+  }
+
+  const openChangeQuoteDialog = () => {
+    setChangeQuoteSelected(topRecommendation)
+    setChangeQuoteReason('')
+    setChangeQuoteSearch('')
+    setChangeQuoteDialogOpen(true)
+  }
+
+  const openAdjustRadarDialog = () => {
+    setDraftRadar({ ...snapshot.current })
+    setAdjustReason('')
+    setAdjustRadarDialogOpen(true)
+  }
+
+  const openPolishDialog = () => {
+    setPolishText(snapshot.copyOverride || quote?.text || '')
+    setPolishDialogOpen(true)
+  }
+
   const headerContent = (
     <div className="flex flex-col gap-[var(--space-2)]">
       <h2 className="text-16-bold text-grey-01 truncate">
-        {client?.name ?? snapshot.clientId} · Persona 审核详情
+        {client?.name ?? snapshot.clientId} · Persona 详情
       </h2>
       <div className="flex flex-wrap items-center gap-[var(--space-1)]">
         <Badge variant="grey">P2 常规</Badge>
-        <Badge variant="cyan">匹配度 {snapshot.quoteMatchScore.toFixed(2)}</Badge>
+        <Badge variant="cyan">匹配度 {(snapshot.quoteMatchScore * 100).toFixed(0)}%</Badge>
         {snapshot.reviewStage && (
           <Badge variant={STAGE_BADGE_VARIANT[snapshot.reviewStage]}>
             ● {REVIEW_STAGE_LABEL[snapshot.reviewStage]}
@@ -194,7 +279,21 @@ export function PersonaReviewDrawer({
         <div className="flex flex-col gap-[var(--space-5)]">
           {/* Section 1: 匹配名言 */}
           <section>
-            <h3 className="text-14-bold text-grey-01 mb-[var(--space-3)]">匹配名言</h3>
+            <div className="mb-[var(--space-3)] flex items-center justify-between gap-[var(--space-2)]">
+              <h3 className="text-14-bold text-grey-01">匹配名言</h3>
+              {isMyTurn && (
+                <div className="flex items-center gap-[var(--space-2)]">
+                  <Button variant="ghost" className="!h-8 !px-3 text-12-medium whitespace-nowrap" onClick={openChangeQuoteDialog}>
+                    手动换名言
+                  </Button>
+                  {(currentRole === 'ops' || currentRole === 'sales') && (
+                    <Button variant="ghost" className="!h-8 !px-3 text-12-medium whitespace-nowrap" onClick={openPolishDialog}>
+                      润色文案
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
             {quote ? (
               <Card className="flex flex-col gap-[var(--space-3)]">
                 <div className="flex items-baseline gap-[var(--space-2)]">
@@ -216,7 +315,7 @@ export function PersonaReviewDrawer({
 
                 <div className="flex flex-wrap gap-[var(--space-1)]">
                   {quote.tags.map(tag => (
-                    <Badge key={tag} variant="grey">{tag}</Badge>
+                    <Badge key={tag} variant="grey">{TAG_LABEL[tag] ?? tag}</Badge>
                   ))}
                 </div>
 
@@ -235,7 +334,14 @@ export function PersonaReviewDrawer({
 
           {/* Section 2: 能力雷达 */}
           <section>
-            <h3 className="text-14-bold text-grey-01 mb-[var(--space-3)]">能力雷达</h3>
+            <div className="mb-[var(--space-3)] flex items-center justify-between gap-[var(--space-2)]">
+              <h3 className="text-14-bold text-grey-01">能力雷达</h3>
+              {isMyTurn && (
+                <Button variant="ghost" className="!h-8 !px-3 text-12-medium whitespace-nowrap" onClick={openAdjustRadarDialog}>
+                  调整雷达
+                </Button>
+              )}
+            </div>
             <Card className="flex justify-center">
               <CapabilityRadar
                 scores={snapshot.current}
@@ -275,9 +381,12 @@ export function PersonaReviewDrawer({
                     </Badge>
                   </div>
                 ))}
-                <button className="text-12-medium text-l-cyan text-left hover:underline mt-[var(--space-1)]">
+                <Link
+                  href={`/clock-config?client=${snapshot.clientId}&tab=review`}
+                  className="text-12-medium text-l-cyan text-left hover:underline mt-[var(--space-1)]"
+                >
                   查看全部 Around the Clock →
-                </button>
+                </Link>
               </div>
             ) : (
               <p className="text-14-regular text-grey-08">暂无关联事件</p>
@@ -286,13 +395,13 @@ export function PersonaReviewDrawer({
 
           {/* Section 4: 审核意见 */}
           <section>
-            <h3 className="text-14-bold text-grey-01 mb-[var(--space-3)]">审核意见</h3>
-            <textarea
+            <h3 className="text-14-bold text-grey-01 mb-[var(--space-3)]">审核备注</h3>
+            <Textarea
+              label="备注（选填）"
               value={reviewComment}
               onChange={e => setReviewComment(e.target.value)}
               placeholder="输入审核意见（选填）…"
               rows={3}
-              className="w-full text-14-regular rounded-md px-3 py-2 border border-grey-12 bg-white text-grey-01 outline-none transition-colors focus:border-grey-01 resize-none"
             />
           </section>
 
@@ -322,47 +431,51 @@ export function PersonaReviewDrawer({
                   <TimelineItem time="当前" label={REVIEW_STAGE_LABEL.at_sales} active />
                 </>
               )}
-              {snapshot.lockStatus === 'locked' && (
+              {snapshot.lockStatus === 'auto_selected' && (
                 <TimelineItem
-                  time={snapshot.lockedAt ? formatTimestamp(snapshot.lockedAt) : '–'}
-                  label={`已锁定（${snapshot.lockedBy ?? '系统'}）`}
+                  time={snapshot.generatedAt ? formatTimestamp(snapshot.generatedAt) : '–'}
+                  label="已匹配（可自动替换）"
                   active={false}
                 />
               )}
             </div>
+            {auditTrail.length > 0 && (
+              <div className="mt-[var(--space-2)] pt-[var(--space-2)] border-t border-stroke flex flex-col gap-[var(--space-2)]">
+                {auditTrail.map((entry) => (
+                  <div key={`${entry.snapshotVersion}-${entry.timestamp}-${entry.action}`} className="flex items-start gap-[var(--space-2)]">
+                    <span className="text-10-regular text-grey-08 tabular-nums shrink-0">
+                      {formatTimestamp(entry.timestamp)}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-12-medium text-grey-01">
+                        {AUDIT_ACTION_LABEL[entry.action] ?? entry.action}
+                      </p>
+                      <p className="text-12-regular text-grey-08 truncate">
+                        {entry.actor} · v{entry.snapshotVersion}
+                        {entry.detail ? ` · ${entry.detail}` : ''}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Footer spacer for sticky bar */}
-          <div className="h-[60px] shrink-0" />
+          <div className="h-[96px] shrink-0" />
         </div>
 
         {/* Sticky footer actions */}
-        <div className="sticky bottom-0 left-0 right-0 border-t border-stroke bg-white px-[var(--space-5)] py-[var(--space-3)] flex items-center gap-[var(--space-2)]">
+        <div className="sticky bottom-0 left-0 right-0 border-t border-stroke bg-white px-[var(--space-5)] py-[var(--space-3)]">
           {isMyTurn && snapshot.reviewStage ? (
-            <>
-              <Button variant="primary" onClick={handleApprove}>
+            <div className="grid grid-cols-2 gap-[var(--space-2)]">
+              <Button variant="primary" className="!h-9 whitespace-nowrap" onClick={handleApprove}>
                 通过，提交{NEXT_STAGE_LABEL[snapshot.reviewStage]}
               </Button>
-              <Button variant="destructive" onClick={() => setRejectDialogOpen(true)}>
+              <Button variant="destructive" className="!h-9 whitespace-nowrap" onClick={() => setRejectDialogOpen(true)}>
                 驳回
               </Button>
-              <Button variant="ghost" onClick={() => {
-                setChangeQuoteSelected(null)
-                setChangeQuoteReason('')
-                setChangeQuoteSearch('')
-                setChangeQuoteDialogOpen(true)
-              }}>
-                手动换名言 ▾
-              </Button>
-              {(currentRole === 'ops' || currentRole === 'sales') && (
-                <Button variant="ghost" onClick={() => {
-                  setPolishText(snapshot.copyOverride || quote?.text || '')
-                  setPolishDialogOpen(true)
-                }}>
-                  润色
-                </Button>
-              )}
-            </>
+            </div>
           ) : (
             <span className="text-14-regular text-grey-08">非本级审核</span>
           )}
@@ -372,12 +485,12 @@ export function PersonaReviewDrawer({
       {/* 驳回 Dialog */}
       <Dialog open={rejectDialogOpen} onClose={() => setRejectDialogOpen(false)} title="驳回审核" width={420}>
         <div className="flex flex-col gap-[var(--space-4)]">
-          <textarea
+          <Textarea
+            label="驳回原因（必填）"
             value={rejectReason}
             onChange={e => setRejectReason(e.target.value)}
             placeholder="请输入驳回原因（必填）…"
             rows={4}
-            className="w-full text-14-regular rounded-md px-3 py-2 border border-grey-12 bg-white text-grey-01 outline-none transition-colors focus:border-grey-01 resize-none"
           />
           <div className="flex justify-end gap-[var(--space-2)]">
             <Button variant="secondary" onClick={() => setRejectDialogOpen(false)}>取消</Button>
@@ -416,7 +529,9 @@ export function PersonaReviewDrawer({
               >
                 <div className="flex items-baseline justify-between gap-[var(--space-2)]">
                   <span className="text-12-medium text-grey-01">{q.author}</span>
-                  <span className="text-10-regular text-grey-08 tabular-nums">{matchScore.toFixed(2)}</span>
+                  <span className={`text-10-regular tabular-nums ${matchScore < 0.5 ? 'text-red' : 'text-grey-08'}`}>
+                    匹配度 {Math.round(matchScore * 100)}%
+                  </span>
                 </div>
                 <p className="text-12-regular text-grey-06 italic mt-[var(--space-1)] line-clamp-2">
                   &ldquo;{q.text}&rdquo;
@@ -425,12 +540,12 @@ export function PersonaReviewDrawer({
             ))}
           </div>
 
-          <textarea
+          <Textarea
+            label="更换原因（必填）"
             value={changeQuoteReason}
             onChange={e => setChangeQuoteReason(e.target.value)}
             placeholder="请输入更换原因（必填）…"
             rows={2}
-            className="w-full text-14-regular rounded-md px-3 py-2 border border-grey-12 bg-white text-grey-01 outline-none transition-colors focus:border-grey-01 resize-none"
           />
 
           <div className="flex justify-end gap-[var(--space-2)]">
@@ -456,19 +571,82 @@ export function PersonaReviewDrawer({
             </p>
           </div>
 
-          <div className="flex flex-col gap-[var(--space-1)]">
-            <span className="text-12-medium text-grey-06">润色内容</span>
-            <textarea
-              value={polishText}
-              onChange={e => setPolishText(e.target.value)}
-              rows={4}
-              className="w-full text-14-regular rounded-md px-3 py-2 border border-grey-12 bg-white text-grey-01 outline-none transition-colors focus:border-grey-01 resize-none"
-            />
-          </div>
+          <Textarea
+            label="润色内容"
+            value={polishText}
+            onChange={e => setPolishText(e.target.value)}
+            rows={4}
+          />
 
           <div className="flex justify-end gap-[var(--space-2)]">
             <Button variant="secondary" onClick={() => setPolishDialogOpen(false)}>取消</Button>
             <Button variant="primary" disabled={!polishText.trim()} onClick={handlePolishConfirm}>确认润色</Button>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* 手动调整雷达 Dialog */}
+      <Dialog open={adjustRadarDialogOpen} onClose={() => setAdjustRadarDialogOpen(false)} title="手动调整雷达" width={560}>
+        <div className="flex flex-col gap-[var(--space-4)]">
+          <p className="text-12-regular text-grey-06">
+            调整后将写入审计日志，并实时同步到总览与客户详情页面。
+          </p>
+
+          <div className="grid grid-cols-1 gap-[var(--space-3)]">
+            {DIMENSION_KEYS.map((key) => (
+              <div key={key} className="flex items-center gap-[var(--space-3)]">
+                <span className="text-12-medium text-grey-06 w-14 shrink-0">
+                  {DIMENSION_LABELS[key]}
+                </span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={draftRadar ? draftRadar[key] : snapshot.current[key]}
+                  onChange={(e) => {
+                    const next = Number(e.target.value)
+                    setDraftRadar((prev) => ({
+                      ...(prev ?? { ...snapshot.current }),
+                      [key]: next,
+                    }))
+                  }}
+                  className="flex-1 accent-[var(--cyan)]"
+                />
+                <span className="text-12-regular text-grey-01 w-10 text-right tabular-nums">
+                  {draftRadar ? draftRadar[key] : snapshot.current[key]}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              variant="ghost"
+              className="!h-8 !px-3 text-12-medium"
+              onClick={() => setDraftRadar({ ...snapshot.previous })}
+            >
+              使用上期分数
+            </Button>
+          </div>
+
+          <Textarea
+            label="调整原因（必填）"
+            value={adjustReason}
+            onChange={(e) => setAdjustReason(e.target.value)}
+            placeholder="请填写调整原因（必填，例如：客户策略切换，效率权重上调）"
+            rows={3}
+          />
+
+          <div className="flex justify-end gap-[var(--space-2)]">
+            <Button variant="secondary" onClick={() => setAdjustRadarDialogOpen(false)}>取消</Button>
+            <Button
+              variant="primary"
+              disabled={!adjustReason.trim() || !draftRadar}
+              onClick={handleAdjustRadarConfirm}
+            >
+              确认调整
+            </Button>
           </div>
         </div>
       </Dialog>

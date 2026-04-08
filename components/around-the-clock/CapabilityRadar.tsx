@@ -88,7 +88,7 @@ export function CapabilityRadar({
             <span className="inline-block w-3 h-0.5 bg-l-cyan rounded" /> 当前
           </span>
           <span className="flex items-center gap-1 text-10-regular text-grey-08">
-            <span className="inline-block w-3 h-0.5 bg-grey-08 rounded opacity-50" style={{ borderTop: '1px dashed var(--grey-08)' }} /> 7 天前
+            <span className="inline-block w-3 h-0.5 bg-grey-08 rounded opacity-50" style={{ borderTop: '1px dashed var(--grey-08)' }} /> 上一周期
           </span>
         </div>
       )}

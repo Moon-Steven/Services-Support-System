@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import {
   IconKanban,
   IconFileText,
@@ -50,8 +51,7 @@ const navGroups: NavGroup[] = [
     items: [
       { name: '资产管理', href: '/assets', icon: IconCard },
       { name: 'Around the Clock', href: '/clock-config', icon: IconClock },
-      { name: 'Persona 审核', href: '/persona-review', icon: IconClipboardCheck },
-      { name: 'Persona 总览', href: '/persona-overview', icon: IconChart },
+      { name: 'Persona', href: '/persona-review', icon: IconClipboardCheck },
       { name: '名言库管理', href: '/quote-library', icon: IconSliders },
       { name: '学习笔记', href: '/learning-notes', icon: IconNote },
     ],
@@ -72,6 +72,11 @@ const navGroups: NavGroup[] = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 flex flex-col w-[var(--width-sidebar)] bg-grey-01">
@@ -89,8 +94,10 @@ export function Sidebar() {
               {group.label}
             </div>
             {group.items.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
-                || (item.href === '/clients' && pathname.startsWith('/client/'))
+              const currentPath = mounted ? pathname : ''
+              const isActive = currentPath === item.href || currentPath.startsWith(item.href + '/')
+                || (item.href === '/clients' && currentPath.startsWith('/client/'))
+                || (item.href === '/persona-review' && currentPath.startsWith('/persona-overview'))
               const Icon = item.icon
               return (
                 <Link

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
@@ -18,6 +18,7 @@ import {
   getPersonaRadarForClient,
   getPersonaSnapshotForClient,
   getPersonaQuoteById,
+  PERSONA_DATA_UPDATED_EVENT,
   PERSONA_LOCK_STATUS_LABEL,
   getClockEntryNarrative,
   obfuscateForSophistication,
@@ -59,9 +60,18 @@ export default function ClientDetailPage() {
 
   // Clock & Learning Notes data
   const clockConfig = useMemo(() => clientClockConfigs.find((c) => c.clientId === id) || null, [id])
-  const personaRadar = useMemo(() => getPersonaRadarForClient(id), [id])
-  const personaSnapshot = useMemo(() => getPersonaSnapshotForClient(id), [id])
+  const [personaRadar, setPersonaRadar] = useState(() => getPersonaRadarForClient(id))
+  const [personaSnapshot, setPersonaSnapshot] = useState(() => getPersonaSnapshotForClient(id))
   const personaQuote = useMemo(() => personaSnapshot ? getPersonaQuoteById(personaSnapshot.selectedQuoteId) : undefined, [personaSnapshot])
+  useEffect(() => {
+    const refresh = () => {
+      setPersonaRadar(getPersonaRadarForClient(id))
+      setPersonaSnapshot(getPersonaSnapshotForClient(id))
+    }
+    refresh()
+    window.addEventListener(PERSONA_DATA_UPDATED_EVENT, refresh)
+    return () => window.removeEventListener(PERSONA_DATA_UPDATED_EVENT, refresh)
+  }, [id])
   const healthScoreM6 = useMemo(() => {
     const h = id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0)
     return 68 + (h % 24)
@@ -588,14 +598,20 @@ export default function ClientDetailPage() {
               <div className="flex items-center justify-between">
                 <div className="text-12-bold text-grey-06 uppercase tracking-wide">Persona</div>
                 <div className="flex items-center gap-[var(--space-1)]">
+                  <Link href="/persona-review" className="text-10-regular text-l-cyan hover:underline">
+                    去处理
+                  </Link>
+                  <Link href="/persona-overview" className="text-10-regular text-l-cyan hover:underline">
+                    总览
+                  </Link>
                   {personaSnapshot?.isDemo && (
                     <span role="status" className="text-10-regular px-[6px] py-[1px] rounded-full bg-grey-12 text-grey-08">演示数据</span>
                   )}
                   {personaSnapshot && (
                     <span className={`text-10-regular px-[6px] py-[1px] rounded-full ${
-                      personaSnapshot.lockStatus === 'locked' ? 'bg-cyan-tint-08 text-l-cyan' :
-                      personaSnapshot.lockStatus === 'in_review' ? 'bg-orange-tint-10 text-orange' :
-                      'bg-grey-12 text-grey-06'
+                      personaSnapshot.lockStatus === 'in_review'
+                        ? 'bg-orange-tint-10 text-orange'
+                        : 'bg-grey-12 text-grey-06'
                     }`}>
                       {PERSONA_LOCK_STATUS_LABEL[personaSnapshot.lockStatus]}
                     </span>

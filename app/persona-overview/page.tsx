@@ -1,11 +1,13 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { clients } from '@/lib/data'
 import {
   getAllPersonaSnapshots,
   getPersonaQuoteById,
   getQuoteLibraryHealth,
+  PERSONA_DATA_UPDATED_EVENT,
   PERSONA_LOCK_STATUS_LABEL,
   DIMENSION_KEYS,
   type PersonaSnapshot,
@@ -14,9 +16,11 @@ import {
 import { CapabilityRadar } from '@/components/around-the-clock/CapabilityRadar'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
+import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
 
 const STATUS_BADGE_VARIANT: Record<PersonaLockStatus, 'cyan' | 'orange' | 'grey' | 'red'> = {
-  locked: 'cyan',
+  locked: 'grey',
   in_review: 'orange',
   auto_selected: 'grey',
   unlocked: 'grey',
@@ -70,19 +74,44 @@ function StatCard({
 }
 
 export default function PersonaOverviewPage() {
-  const snapshots = useMemo(() => getAllPersonaSnapshots(), [])
+  const [snapshots, setSnapshots] = useState<PersonaSnapshot[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [mounted, setMounted] = useState(false)
   const health = useMemo(() => getQuoteLibraryHealth(), [])
 
-  const lockedCount = snapshots.filter(s => s.lockStatus === 'locked').length
+  useEffect(() => {
+    setMounted(true)
+    setSnapshots(getAllPersonaSnapshots())
+    const refresh = () => setSnapshots(getAllPersonaSnapshots())
+    window.addEventListener(PERSONA_DATA_UPDATED_EVENT, refresh)
+    return () => window.removeEventListener(PERSONA_DATA_UPDATED_EVENT, refresh)
+  }, [])
+
+  const matchedCount = snapshots.filter(s => s.lockStatus === 'auto_selected').length
   const reviewCount = snapshots.filter(s => s.lockStatus === 'in_review').length
   const pendingCount = snapshots.filter(
     s => s.lockStatus === 'auto_selected' || s.lockStatus === 'unlocked' || s.lockStatus === 'pending_manual'
   ).length
 
-  const snapsWithAnomalies = useMemo(
-    () => snapshots.map(s => ({ snap: s, anomalies: getAnomalies(s) })),
-    [snapshots]
-  )
+  const snapsWithAnomalies = useMemo(() => {
+    const keyword = searchQuery.trim().toLowerCase()
+    return snapshots
+      .map(s => ({ snap: s, anomalies: getAnomalies(s) }))
+      .filter(({ snap }) => {
+        if (!keyword) return true
+        const client = clients.find(c => c.id === snap.clientId)
+        const quote = getPersonaQuoteById(snap.selectedQuoteId)
+        return (
+          (client?.name ?? snap.clientId).toLowerCase().includes(keyword)
+          || (client?.industry ?? '').toLowerCase().includes(keyword)
+          || (quote?.author ?? '').toLowerCase().includes(keyword)
+        )
+      })
+      .sort((a, b) => {
+        if (a.anomalies.length !== b.anomalies.length) return b.anomalies.length - a.anomalies.length
+        return a.snap.quoteMatchScore - b.snap.quoteMatchScore
+      })
+  }, [snapshots, searchQuery])
   const anomalyCount = snapsWithAnomalies.filter(({ anomalies }) => anomalies.length > 0).length
 
   const avgMatch =
@@ -90,12 +119,22 @@ export default function PersonaOverviewPage() {
       ? snapshots.reduce((sum, s) => sum + s.quoteMatchScore, 0) / snapshots.length
       : 0
 
+  if (!mounted) return null
+
   return (
     <div className="flex flex-col gap-[var(--space-6)] p-[var(--space-6)]">
-      <h1 className="text-24-bold text-grey-01">Persona 总览</h1>
+      <div className="flex items-start justify-between gap-[var(--space-4)]">
+        <div className="flex flex-col gap-[var(--space-1)]">
+          <h1 className="text-24-bold text-grey-01">Persona 总览</h1>
+          <p className="text-12-regular text-grey-08">优先显示异常与低匹配客户，支持快速跳转到审核处理。</p>
+        </div>
+        <Link href="/persona-review" className="text-12-medium text-l-cyan hover:underline">
+          返回审核台
+        </Link>
+      </div>
 
       <div className="flex gap-[var(--space-4)] flex-wrap">
-        <StatCard label="已锁定" count={lockedCount} color="cyan" />
+        <StatCard label="已匹配" count={matchedCount} color="cyan" />
         <StatCard label="审核中" count={reviewCount} color="orange" />
         <StatCard label="待审/待匹配" count={pendingCount} color="grey" />
         <StatCard label="异常" count={anomalyCount} color="red" />
@@ -129,6 +168,24 @@ export default function PersonaOverviewPage() {
         </div>
       </Card>
 
+      <Card className="flex items-center gap-[var(--space-3)]">
+        <div className="w-[320px]">
+          <Input
+            placeholder="搜索客户/行业/作者"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <span className="text-12-regular text-grey-08">
+          当前结果：<span className="text-grey-01 text-12-medium">{snapsWithAnomalies.length}</span> 条
+        </span>
+        {searchQuery.trim() && (
+          <Button variant="ghost" className="!h-8 !px-3 text-12-medium" onClick={() => setSearchQuery('')}>
+            清除搜索
+          </Button>
+        )}
+      </Card>
+
       <Card padding="none">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[800px]">
@@ -140,7 +197,8 @@ export default function PersonaOverviewPage() {
                 <th className="px-[var(--space-3)] py-[var(--space-3)]">匹配度</th>
                 <th className="px-[var(--space-3)] py-[var(--space-3)]">状态</th>
                 <th className="px-[var(--space-3)] py-[var(--space-3)]">上次更新</th>
-                <th className="px-[var(--space-3)] py-[var(--space-3)] pr-[var(--space-5)]">异常</th>
+                <th className="px-[var(--space-3)] py-[var(--space-3)]">异常</th>
+                <th className="px-[var(--space-3)] py-[var(--space-3)] pr-[var(--space-5)]">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -185,7 +243,7 @@ export default function PersonaOverviewPage() {
                         {formatDate(snap.generatedAt)}
                       </span>
                     </td>
-                    <td className="px-[var(--space-3)] py-[var(--space-3)] pr-[var(--space-5)]">
+                    <td className="px-[var(--space-3)] py-[var(--space-3)]">
                       {anomalies.length > 0 ? (
                         <div className="flex flex-wrap gap-[var(--space-1)]">
                           {anomalies.map(a => (
@@ -198,6 +256,14 @@ export default function PersonaOverviewPage() {
                         <span className="text-12-regular text-grey-08">—</span>
                       )}
                     </td>
+                    <td className="px-[var(--space-3)] py-[var(--space-3)] pr-[var(--space-5)]">
+                      <Link
+                        href="/persona-review"
+                        className="text-12-medium text-l-cyan hover:underline"
+                      >
+                        去处理
+                      </Link>
+                    </td>
                   </tr>
                 )
               })}
@@ -209,12 +275,12 @@ export default function PersonaOverviewPage() {
       <Card>
         <div className="flex items-center gap-[var(--space-6)] flex-wrap text-14-regular text-grey-06">
           <span>
-            锁定覆盖率:
+            匹配覆盖率:
             <span className="text-14-bold text-grey-01 ml-[var(--space-1)]">
-              {lockedCount}/{snapshots.length}
+              {matchedCount}/{snapshots.length}
             </span>
             <span className="text-12-regular text-grey-08 ml-[var(--space-1)]">
-              ({snapshots.length > 0 ? ((lockedCount / snapshots.length) * 100).toFixed(0) : 0}%)
+              ({snapshots.length > 0 ? ((matchedCount / snapshots.length) * 100).toFixed(0) : 0}%)
             </span>
           </span>
           <span className="w-px h-4 bg-stroke" />

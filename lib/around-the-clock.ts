@@ -536,7 +536,7 @@ export type PersonaSnapshot = {
 
 export type PersonaAuditAction =
   | 'created' | 'review_pass' | 'review_reject'
-  | 'quote_change' | 'lock' | 'unlock' | 'force_unlock' | 'copy_override'
+  | 'quote_change' | 'lock' | 'unlock' | 'force_unlock' | 'copy_override' | 'radar_adjust'
 
 export type PersonaAuditEntry = {
   snapshotClientId: string
@@ -548,12 +548,19 @@ export type PersonaAuditEntry = {
   timestamp: string
 }
 
+export const PERSONA_DATA_UPDATED_EVENT = 'persona-data-updated'
+
+function emitPersonaDataUpdated() {
+  if (typeof window === 'undefined') return
+  window.dispatchEvent(new CustomEvent(PERSONA_DATA_UPDATED_EVENT))
+}
+
 export const PERSONA_LOCK_STATUS_LABEL: Record<PersonaLockStatus, string> = {
   auto_selected: '算法推荐',
   in_review: '审核中',
-  locked: '已锁定',
+  locked: '已审核',
   unlocked: '待重新匹配',
-  pending_manual: '待人工选择',
+  pending_manual: '待处理（低匹配）',
 }
 
 export const REVIEW_STAGE_LABEL: Record<ReviewStage, string> = {
@@ -664,7 +671,7 @@ export const clientPersonaSnapshots: PersonaSnapshot[] = [
     current: { retention: 76, exploration: 62, precision: 70, efficiency: 82, riskControl: 68, creativity: 74 },
     previous: { retention: 74, exploration: 60, precision: 68, efficiency: 80, riskControl: 66, creativity: 72 },
     selectedQuoteId: 'q-drucker-01', quoteMatchScore: 0.88,
-    lockStatus: 'locked', lockedBy: '孙八', lockedAt: '2026-04-01T10:00:00',
+    lockStatus: 'auto_selected',
     generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 2,
   },
   {
@@ -672,7 +679,7 @@ export const clientPersonaSnapshots: PersonaSnapshot[] = [
     current: { retention: 80, exploration: 56, precision: 86, efficiency: 71, riskControl: 88, creativity: 60 },
     previous: { retention: 78, exploration: 54, precision: 84, efficiency: 70, riskControl: 86, creativity: 58 },
     selectedQuoteId: 'q-deming-01', quoteMatchScore: 0.93,
-    lockStatus: 'locked', lockedBy: '周九', lockedAt: '2026-04-03T11:20:00',
+    lockStatus: 'auto_selected',
     generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 4,
   },
   {
@@ -688,7 +695,7 @@ export const clientPersonaSnapshots: PersonaSnapshot[] = [
     current: { retention: 78, exploration: 58, precision: 82, efficiency: 75, riskControl: 86, creativity: 60 },
     previous: { retention: 76, exploration: 56, precision: 80, efficiency: 73, riskControl: 84, creativity: 58 },
     selectedQuoteId: 'q-buffett-01', quoteMatchScore: 0.94,
-    lockStatus: 'locked', lockedBy: '孙八', lockedAt: '2026-04-02T14:00:00',
+    lockStatus: 'auto_selected',
     generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 3,
   },
   {
@@ -704,7 +711,7 @@ export const clientPersonaSnapshots: PersonaSnapshot[] = [
     current: { retention: 74, exploration: 76, precision: 72, efficiency: 83, riskControl: 76, creativity: 86 },
     previous: { retention: 72, exploration: 74, precision: 70, efficiency: 81, riskControl: 74, creativity: 84 },
     selectedQuoteId: 'q-bernbach-01', quoteMatchScore: 0.90,
-    lockStatus: 'locked', lockedBy: '孙八', lockedAt: '2026-04-04T09:00:00',
+    lockStatus: 'auto_selected',
     generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 2,
   },
   {
@@ -712,10 +719,53 @@ export const clientPersonaSnapshots: PersonaSnapshot[] = [
     current: { retention: 82, exploration: 54, precision: 78, efficiency: 74, riskControl: 84, creativity: 62 },
     previous: { retention: 80, exploration: 52, precision: 76, efficiency: 72, riskControl: 82, creativity: 60 },
     selectedQuoteId: 'q-grove-01', quoteMatchScore: 0.92,
-    lockStatus: 'locked', lockedBy: '周九', lockedAt: '2026-04-03T16:00:00',
+    lockStatus: 'auto_selected',
     generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 3,
   },
+  {
+    clientId: 'readnow', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 83, exploration: 66, precision: 74, efficiency: 79, riskControl: 73, creativity: 82 },
+    previous: { retention: 80, exploration: 64, precision: 72, efficiency: 76, riskControl: 72, creativity: 80 },
+    selectedQuoteId: 'q-ogilvy-01', quoteMatchScore: 0.87,
+    lockStatus: 'in_review', reviewStage: 'at_sales',
+    generatedAt: '2026-04-06T00:00:00', isDemo: true, version: 2,
+  },
+  {
+    clientId: 'luxevibe', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 71, exploration: 75, precision: 69, efficiency: 73, riskControl: 67, creativity: 84 },
+    previous: { retention: 70, exploration: 72, precision: 68, efficiency: 70, riskControl: 66, creativity: 81 },
+    selectedQuoteId: 'q-bernbach-01', quoteMatchScore: 0.91,
+    lockStatus: 'in_review', reviewStage: 'at_delivery',
+    generatedAt: '2026-04-06T00:00:00', isDemo: true, version: 1,
+  },
+  {
+    clientId: 'travelgo', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 75, exploration: 70, precision: 71, efficiency: 76, riskControl: 79, creativity: 65 },
+    previous: { retention: 72, exploration: 68, precision: 70, efficiency: 74, riskControl: 77, creativity: 63 },
+    selectedQuoteId: 'q-drucker-01', quoteMatchScore: 0.78,
+    lockStatus: 'auto_selected',
+    generatedAt: '2026-03-30T00:00:00', isDemo: true, version: 2,
+  },
+  {
+    clientId: 'brightpath', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 60, exploration: 58, precision: 62, efficiency: 64, riskControl: 70, creativity: 61 },
+    previous: { retention: 66, exploration: 60, precision: 68, efficiency: 69, riskControl: 74, creativity: 63 },
+    selectedQuoteId: 'q-kelleher-01', quoteMatchScore: 0.47,
+    lockStatus: 'pending_manual',
+    generatedAt: '2026-04-06T00:00:00', isDemo: true, version: 1,
+  },
 ]
+
+const personaAuditEntries: PersonaAuditEntry[] = []
+
+function cloneSnapshot(snapshot: PersonaSnapshot): PersonaSnapshot {
+  return {
+    ...snapshot,
+    evaluationPeriod: { ...snapshot.evaluationPeriod },
+    current: { ...snapshot.current },
+    previous: { ...snapshot.previous },
+  }
+}
 
 /* ── Persona 查询/操作接口 ── */
 
@@ -725,7 +775,8 @@ export function getPersonaRadarForClient(clientId: string): PersonaRadarDimensio
 }
 
 export function getPersonaSnapshotForClient(clientId: string): PersonaSnapshot | undefined {
-  return clientPersonaSnapshots.find(s => s.clientId === clientId)
+  const snapshot = clientPersonaSnapshots.find(s => s.clientId === clientId)
+  return snapshot ? cloneSnapshot(snapshot) : undefined
 }
 
 export function getPersonaQuoteById(quoteId: string): PersonaQuote | undefined {
@@ -762,7 +813,7 @@ export function matchQuoteForRadar(
 }
 
 export function canAlgorithmReplaceQuote(snapshot: PersonaSnapshot): boolean {
-  return snapshot.lockStatus === 'auto_selected' || snapshot.lockStatus === 'unlocked'
+  return snapshot.lockStatus !== 'pending_manual'
 }
 
 export function isRejectedTask(snapshot: PersonaSnapshot): boolean {
@@ -781,14 +832,13 @@ export function getSnapshotsForReview(filter?: {
 }
 
 export function getAllPersonaSnapshots(): PersonaSnapshot[] {
-  return clientPersonaSnapshots
+  return clientPersonaSnapshots.map(cloneSnapshot)
 }
 
 export function getQuoteLibraryHealth() {
   const quotes = PERSONA_QUOTES
   const available = quotes.filter(q => q.status === 'available')
-  const locked = clientPersonaSnapshots.filter(s => s.lockStatus === 'locked')
-  const usedQuoteIds = new Set(locked.map(s => s.selectedQuoteId))
+  const usedQuoteIds = new Set(clientPersonaSnapshots.map(s => s.selectedQuoteId))
   return {
     totalAvailable: available.length,
     totalDraft: quotes.filter(q => q.status === 'draft').length,
@@ -796,6 +846,222 @@ export function getQuoteLibraryHealth() {
     totalRetired: quotes.filter(q => q.status === 'retired').length,
     utilizationRate: available.length > 0 ? usedQuoteIds.size / available.length : 0,
   }
+}
+
+export function adjustPersonaRadarForClient(params: {
+  clientId: string
+  nextCurrent: PersonaRadarDimensions
+  reason: string
+  actor?: string
+}): { success: boolean; snapshot?: PersonaSnapshot } {
+  const target = clientPersonaSnapshots.find(s => s.clientId === params.clientId)
+  if (!target) return { success: false }
+  const cleanReason = params.reason.trim()
+  if (!cleanReason) return { success: false }
+
+  target.previous = { ...target.current }
+  target.current = { ...params.nextCurrent }
+  target.generatedAt = new Date().toISOString().slice(0, 19)
+  target.version += 1
+
+  personaAuditEntries.unshift({
+    snapshotClientId: target.clientId,
+    snapshotVersion: target.version,
+    action: 'radar_adjust',
+    actor: params.actor?.trim() || '交付',
+    detail: cleanReason,
+    timestamp: new Date().toISOString().slice(0, 19),
+  })
+
+  emitPersonaDataUpdated()
+  return { success: true, snapshot: cloneSnapshot(target) }
+}
+
+function nowIsoSecond(): string {
+  return new Date().toISOString().slice(0, 19)
+}
+
+function getNextReviewStage(stage: ReviewStage): ReviewStage | null {
+  if (stage === 'at_delivery') return 'at_ops'
+  if (stage === 'at_ops') return 'at_sales'
+  return null
+}
+
+function toAffinityScale(affinity: PersonaRadarDimensions): PersonaRadarDimensions {
+  return {
+    retention: affinity.retention * 100,
+    exploration: affinity.exploration * 100,
+    precision: affinity.precision * 100,
+    efficiency: affinity.efficiency * 100,
+    riskControl: affinity.riskControl * 100,
+    creativity: affinity.creativity * 100,
+  }
+}
+
+function calcMatchScore(current: PersonaRadarDimensions, affinity: PersonaRadarDimensions): number {
+  const target = toAffinityScale(affinity)
+  let dot = 0
+  let normCurrent = 0
+  let normTarget = 0
+  for (const key of DIMENSION_KEYS) {
+    dot += current[key] * target[key]
+    normCurrent += current[key] * current[key]
+    normTarget += target[key] * target[key]
+  }
+  if (normCurrent === 0 || normTarget === 0) return 0
+  return dot / (Math.sqrt(normCurrent) * Math.sqrt(normTarget))
+}
+
+export function approvePersonaSnapshot(params: {
+  clientId: string
+  actor?: string
+  comment?: string
+}): { success: boolean; snapshot?: PersonaSnapshot } {
+  const target = clientPersonaSnapshots.find(s => s.clientId === params.clientId)
+  if (!target || !target.reviewStage) return { success: false }
+
+  const timestamp = nowIsoSecond()
+  const currentStage = target.reviewStage
+  const nextStage = getNextReviewStage(currentStage)
+
+  target.rejectedFrom = undefined
+  target.rejectedReason = undefined
+  target.generatedAt = timestamp
+  target.version += 1
+
+  if (nextStage) {
+    target.reviewStage = nextStage
+    target.lockStatus = 'in_review'
+  } else {
+    target.reviewStage = undefined
+    target.lockStatus = 'auto_selected'
+  }
+
+  personaAuditEntries.unshift({
+    snapshotClientId: target.clientId,
+    snapshotVersion: target.version,
+    action: 'review_pass',
+    actor: params.actor?.trim() || '系统',
+    stage: currentStage,
+    detail: params.comment?.trim() || undefined,
+    timestamp,
+  })
+
+  emitPersonaDataUpdated()
+  return { success: true, snapshot: cloneSnapshot(target) }
+}
+
+export function rejectPersonaSnapshot(params: {
+  clientId: string
+  reason: string
+  actor?: string
+}): { success: boolean; snapshot?: PersonaSnapshot } {
+  const target = clientPersonaSnapshots.find(s => s.clientId === params.clientId)
+  if (!target || !target.reviewStage) return { success: false }
+  const reason = params.reason.trim()
+  if (!reason) return { success: false }
+
+  const timestamp = nowIsoSecond()
+  const rejectedStage = target.reviewStage
+
+  target.reviewStage = 'at_delivery'
+  target.lockStatus = 'in_review'
+  target.rejectedFrom = rejectedStage
+  target.rejectedReason = reason
+  target.generatedAt = timestamp
+  target.version += 1
+
+  personaAuditEntries.unshift({
+    snapshotClientId: target.clientId,
+    snapshotVersion: target.version,
+    action: 'review_reject',
+    actor: params.actor?.trim() || '系统',
+    stage: rejectedStage,
+    detail: reason,
+    timestamp,
+  })
+
+  emitPersonaDataUpdated()
+  return { success: true, snapshot: cloneSnapshot(target) }
+}
+
+export function changePersonaQuoteForClient(params: {
+  clientId: string
+  quoteId: string
+  reason: string
+  actor?: string
+}): { success: boolean; snapshot?: PersonaSnapshot } {
+  const target = clientPersonaSnapshots.find(s => s.clientId === params.clientId)
+  const quote = getPersonaQuoteById(params.quoteId)
+  const reason = params.reason.trim()
+  if (!target || !quote || !reason) return { success: false }
+
+  const timestamp = nowIsoSecond()
+  target.selectedQuoteId = quote.id
+  target.quoteMatchScore = Number(calcMatchScore(target.current, quote.dimensionAffinity).toFixed(4))
+  target.generatedAt = timestamp
+  target.version += 1
+
+  if (!target.reviewStage) {
+    target.reviewStage = 'at_delivery'
+    target.lockStatus = 'in_review'
+  }
+
+  personaAuditEntries.unshift({
+    snapshotClientId: target.clientId,
+    snapshotVersion: target.version,
+    action: 'quote_change',
+    actor: params.actor?.trim() || '系统',
+    stage: target.reviewStage,
+    detail: `${quote.author} · ${reason}`,
+    timestamp,
+  })
+
+  emitPersonaDataUpdated()
+  return { success: true, snapshot: cloneSnapshot(target) }
+}
+
+export function setPersonaCopyOverrideForClient(params: {
+  clientId: string
+  text: string
+  actor?: string
+}): { success: boolean; snapshot?: PersonaSnapshot } {
+  const target = clientPersonaSnapshots.find(s => s.clientId === params.clientId)
+  const text = params.text.trim()
+  if (!target || !text) return { success: false }
+
+  const timestamp = nowIsoSecond()
+  target.copyOverride = text
+  target.generatedAt = timestamp
+  target.version += 1
+
+  personaAuditEntries.unshift({
+    snapshotClientId: target.clientId,
+    snapshotVersion: target.version,
+    action: 'copy_override',
+    actor: params.actor?.trim() || '系统',
+    stage: target.reviewStage,
+    detail: '更新对客文案',
+    timestamp,
+  })
+
+  emitPersonaDataUpdated()
+  return { success: true, snapshot: cloneSnapshot(target) }
+}
+
+export function getPersonaAuditTrail(clientId: string): PersonaAuditEntry[] {
+  const generated = clientPersonaSnapshots
+    .filter(s => s.clientId === clientId)
+    .map(s => ({
+      snapshotClientId: s.clientId,
+      snapshotVersion: s.version,
+      action: 'created' as const,
+      actor: 'HUI',
+      detail: '系统生成快照',
+      timestamp: s.generatedAt,
+    }))
+  return [...personaAuditEntries.filter(e => e.snapshotClientId === clientId), ...generated]
+    .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
 }
 
 /* ── Clock 条目叙事（可选字段 + 回退） ── */
