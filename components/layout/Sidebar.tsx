@@ -50,6 +50,9 @@ const navGroups: NavGroup[] = [
     items: [
       { name: '资产管理', href: '/assets', icon: IconCard },
       { name: 'Around the Clock', href: '/clock-config', icon: IconClock },
+      { name: 'Persona 审核', href: '/persona-review', icon: IconClipboardCheck },
+      { name: 'Persona 总览', href: '/persona-overview', icon: IconChart },
+      { name: '名言库管理', href: '/quote-library', icon: IconSliders },
       { name: '学习笔记', href: '/learning-notes', icon: IconNote },
     ],
   },

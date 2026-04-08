@@ -468,32 +468,333 @@ export function cloneAtcReviewEvents(): AtcReviewEvent[] {
 
 export const ATC_REVIEW_EVENTS_SEED = seedEvents()
 
-/* ── 能力雷达（mock，正面事件可推高维度） ── */
+/* ══ Persona 能力雷达 — 6 维模型 ══ */
 
 export type PersonaRadarDimensions = {
+  retention: number
+  exploration: number
+  precision: number
   efficiency: number
   riskControl: number
-  strategy: number
   creativity: number
 }
 
-export const clientPersonaRadarByClientId: Record<string, PersonaRadarDimensions> = {
-  wavebone: { efficiency: 78, riskControl: 72, strategy: 81, creativity: 85 },
-  quickbuy: { efficiency: 82, riskControl: 68, strategy: 76, creativity: 74 },
-  medplus: { efficiency: 71, riskControl: 88, strategy: 79, creativity: 73 },
-  gameon: { efficiency: 80, riskControl: 70, strategy: 84, creativity: 88 },
-  fintech: { efficiency: 75, riskControl: 86, strategy: 82, creativity: 66 },
-  shopmax: { efficiency: 77, riskControl: 74, strategy: 72, creativity: 70 },
-  novelking: { efficiency: 83, riskControl: 76, strategy: 80, creativity: 86 },
-  payeasy: { efficiency: 74, riskControl: 84, strategy: 78, creativity: 68 },
+export const DIMENSION_KEYS: (keyof PersonaRadarDimensions)[] = [
+  'retention', 'exploration', 'precision', 'efficiency', 'riskControl', 'creativity',
+]
+
+export const DIMENSION_LABELS: Record<keyof PersonaRadarDimensions, string> = {
+  retention: '留存',
+  exploration: '探索',
+  precision: '精准',
+  efficiency: '效率',
+  riskControl: '风控',
+  creativity: '创意',
 }
 
+export type QuoteLibraryStatus = 'draft' | 'under_review' | 'available' | 'retired'
+export type QuoteRetiredReason = 'normal' | 'safety'
+
+export type PersonaQuote = {
+  id: string
+  text: string
+  author: string
+  authorLifespan: string
+  authorTitle: string
+  locale: 'en' | 'zh'
+  dimensionAffinity: PersonaRadarDimensions
+  tags: string[]
+  status: QuoteLibraryStatus
+  retiredType?: QuoteRetiredReason
+  retiredReason?: string
+  reviewedBy?: string
+  reviewedAt?: string
+}
+
+export type PersonaLockStatus = 'auto_selected' | 'in_review' | 'locked' | 'unlocked' | 'pending_manual'
+export type ReviewStage = 'at_delivery' | 'at_ops' | 'at_sales'
+
+export type PersonaSnapshot = {
+  clientId: string
+  evaluationPeriod: { start: string; end: string }
+  current: PersonaRadarDimensions
+  previous: PersonaRadarDimensions
+  selectedQuoteId: string
+  quoteMatchScore: number
+  lockStatus: PersonaLockStatus
+  reviewStage?: ReviewStage
+  rejectedFrom?: ReviewStage
+  rejectedReason?: string
+  copyOverride?: string
+  lockedBy?: string
+  lockedAt?: string
+  unlockReason?: string
+  generatedAt: string
+  isDemo: boolean
+  version: number
+}
+
+export type PersonaAuditAction =
+  | 'created' | 'review_pass' | 'review_reject'
+  | 'quote_change' | 'lock' | 'unlock' | 'force_unlock' | 'copy_override'
+
+export type PersonaAuditEntry = {
+  snapshotClientId: string
+  snapshotVersion: number
+  action: PersonaAuditAction
+  actor: string
+  stage?: ReviewStage
+  detail?: string
+  timestamp: string
+}
+
+export const PERSONA_LOCK_STATUS_LABEL: Record<PersonaLockStatus, string> = {
+  auto_selected: '算法推荐',
+  in_review: '审核中',
+  locked: '已锁定',
+  unlocked: '待重新匹配',
+  pending_manual: '待人工选择',
+}
+
+export const REVIEW_STAGE_LABEL: Record<ReviewStage, string> = {
+  at_delivery: '交付待审',
+  at_ops: '行运待审',
+  at_sales: '销售待审',
+}
+
+/* ── 名言种子数据 ── */
+
+export const PERSONA_QUOTES: PersonaQuote[] = [
+  {
+    id: 'q-drucker-01',
+    text: 'Beware of little expenses; a small leak will sink a great ship.',
+    author: 'Peter Drucker', authorLifespan: '1909–2005', authorTitle: '管理学之父',
+    locale: 'en', tags: ['ecommerce', 'finance', 'general'],
+    dimensionAffinity: { retention: 0.3, exploration: 0.1, precision: 0.5, efficiency: 0.9, riskControl: 0.8, creativity: 0.1 },
+    status: 'available', reviewedBy: '品牌团队', reviewedAt: '2026-03-15',
+  },
+  {
+    id: 'q-ogilvy-01',
+    text: "If it doesn't sell, it isn't creative.",
+    author: 'David Ogilvy', authorLifespan: '1911–1999', authorTitle: '广告教父',
+    locale: 'en', tags: ['ecommerce', 'gaming'],
+    dimensionAffinity: { retention: 0.2, exploration: 0.4, precision: 0.6, efficiency: 0.7, riskControl: 0.2, creativity: 0.9 },
+    status: 'available', reviewedBy: '品牌团队', reviewedAt: '2026-03-15',
+  },
+  {
+    id: 'q-bezos-01',
+    text: 'Double the number of experiments you do per year.',
+    author: 'Jeff Bezos', authorLifespan: '1964–', authorTitle: 'Amazon 创始人',
+    locale: 'en', tags: ['ecommerce', 'gaming'],
+    dimensionAffinity: { retention: 0.2, exploration: 0.9, precision: 0.3, efficiency: 0.4, riskControl: 0.2, creativity: 0.7 },
+    status: 'available', reviewedBy: '品牌团队', reviewedAt: '2026-03-15',
+  },
+  {
+    id: 'q-deming-01',
+    text: 'In God we trust; all others must bring data.',
+    author: 'W. Edwards Deming', authorLifespan: '1900–1993', authorTitle: '质量管理之父',
+    locale: 'en', tags: ['healthcare', 'finance'],
+    dimensionAffinity: { retention: 0.3, exploration: 0.2, precision: 0.9, efficiency: 0.5, riskControl: 0.6, creativity: 0.1 },
+    status: 'available', reviewedBy: '品牌团队', reviewedAt: '2026-03-15',
+  },
+  {
+    id: 'q-buffett-01',
+    text: 'Risk comes from not knowing what you are doing.',
+    author: 'Warren Buffett', authorLifespan: '1930–', authorTitle: '价值投资大师',
+    locale: 'en', tags: ['finance', 'general'],
+    dimensionAffinity: { retention: 0.5, exploration: 0.1, precision: 0.4, efficiency: 0.3, riskControl: 0.9, creativity: 0.1 },
+    status: 'available', reviewedBy: '品牌团队', reviewedAt: '2026-03-15',
+  },
+  {
+    id: 'q-bernbach-01',
+    text: 'Nobody counts the number of ads you run; they just remember the impression you make.',
+    author: 'Bill Bernbach', authorLifespan: '1911–1982', authorTitle: '创意革命先驱',
+    locale: 'en', tags: ['ecommerce', 'entertainment'],
+    dimensionAffinity: { retention: 0.4, exploration: 0.3, precision: 0.2, efficiency: 0.2, riskControl: 0.1, creativity: 0.9 },
+    status: 'available', reviewedBy: '品牌团队', reviewedAt: '2026-03-15',
+  },
+  {
+    id: 'q-grove-01',
+    text: 'Only the paranoid survive.',
+    author: 'Andy Grove', authorLifespan: '1936–2016', authorTitle: 'Intel 前 CEO',
+    locale: 'en', tags: ['finance', 'gaming'],
+    dimensionAffinity: { retention: 0.6, exploration: 0.3, precision: 0.4, efficiency: 0.3, riskControl: 0.9, creativity: 0.2 },
+    status: 'available', reviewedBy: '品牌团队', reviewedAt: '2026-03-15',
+  },
+  {
+    id: 'q-sunzi-01',
+    text: '知彼知己，百战不殆。',
+    author: '孙子', authorLifespan: '约前544–前496', authorTitle: '兵法家',
+    locale: 'zh', tags: ['gaming', 'finance'],
+    dimensionAffinity: { retention: 0.6, exploration: 0.3, precision: 0.8, efficiency: 0.4, riskControl: 0.7, creativity: 0.2 },
+    status: 'under_review',
+  },
+  {
+    id: 'q-zuck-01',
+    text: 'Move fast and break things.',
+    author: 'Mark Zuckerberg', authorLifespan: '1984–', authorTitle: 'Meta 创始人',
+    locale: 'en', tags: ['gaming', 'entertainment'],
+    dimensionAffinity: { retention: 0.1, exploration: 0.9, precision: 0.2, efficiency: 0.5, riskControl: 0.1, creativity: 0.7 },
+    status: 'retired', retiredType: 'safety', retiredReason: '品牌安全风险：与"破坏"关联过强',
+    reviewedBy: '合规团队', reviewedAt: '2026-04-01',
+  },
+  {
+    id: 'q-kelleher-01',
+    text: 'The business of business is people.',
+    author: 'Herb Kelleher', authorLifespan: '1931–2019', authorTitle: 'Southwest Airlines 创始人',
+    locale: 'en', tags: ['general'],
+    dimensionAffinity: { retention: 0.8, exploration: 0.3, precision: 0.2, efficiency: 0.4, riskControl: 0.3, creativity: 0.5 },
+    status: 'draft',
+  },
+]
+
+/* ── 客户 Persona 快照种子数据 ── */
+
+export const clientPersonaSnapshots: PersonaSnapshot[] = [
+  {
+    clientId: 'wavebone', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 72, exploration: 68, precision: 74, efficiency: 78, riskControl: 72, creativity: 85 },
+    previous: { retention: 68, exploration: 65, precision: 70, efficiency: 74, riskControl: 70, creativity: 82 },
+    selectedQuoteId: 'q-ogilvy-01', quoteMatchScore: 0.91,
+    lockStatus: 'in_review', reviewStage: 'at_delivery',
+    generatedAt: '2026-04-06T00:00:00', isDemo: true, version: 3,
+  },
+  {
+    clientId: 'quickbuy', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 76, exploration: 62, precision: 70, efficiency: 82, riskControl: 68, creativity: 74 },
+    previous: { retention: 74, exploration: 60, precision: 68, efficiency: 80, riskControl: 66, creativity: 72 },
+    selectedQuoteId: 'q-drucker-01', quoteMatchScore: 0.88,
+    lockStatus: 'locked', lockedBy: '孙八', lockedAt: '2026-04-01T10:00:00',
+    generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 2,
+  },
+  {
+    clientId: 'medplus', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 80, exploration: 56, precision: 86, efficiency: 71, riskControl: 88, creativity: 60 },
+    previous: { retention: 78, exploration: 54, precision: 84, efficiency: 70, riskControl: 86, creativity: 58 },
+    selectedQuoteId: 'q-deming-01', quoteMatchScore: 0.93,
+    lockStatus: 'locked', lockedBy: '周九', lockedAt: '2026-04-03T11:20:00',
+    generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 4,
+  },
+  {
+    clientId: 'gameon', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 64, exploration: 82, precision: 66, efficiency: 80, riskControl: 70, creativity: 88 },
+    previous: { retention: 62, exploration: 80, precision: 64, efficiency: 78, riskControl: 68, creativity: 86 },
+    selectedQuoteId: 'q-bezos-01', quoteMatchScore: 0.89,
+    lockStatus: 'in_review', reviewStage: 'at_ops',
+    generatedAt: '2026-04-06T00:00:00', isDemo: true, version: 2,
+  },
+  {
+    clientId: 'fintech', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 78, exploration: 58, precision: 82, efficiency: 75, riskControl: 86, creativity: 60 },
+    previous: { retention: 76, exploration: 56, precision: 80, efficiency: 73, riskControl: 84, creativity: 58 },
+    selectedQuoteId: 'q-buffett-01', quoteMatchScore: 0.94,
+    lockStatus: 'locked', lockedBy: '孙八', lockedAt: '2026-04-02T14:00:00',
+    generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 3,
+  },
+  {
+    clientId: 'shopmax', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 70, exploration: 72, precision: 68, efficiency: 77, riskControl: 74, creativity: 70 },
+    previous: { retention: 68, exploration: 70, precision: 66, efficiency: 75, riskControl: 72, creativity: 68 },
+    selectedQuoteId: 'q-drucker-01', quoteMatchScore: 0.43,
+    lockStatus: 'pending_manual',
+    generatedAt: '2026-04-06T00:00:00', isDemo: true, version: 1,
+  },
+  {
+    clientId: 'novelking', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 74, exploration: 76, precision: 72, efficiency: 83, riskControl: 76, creativity: 86 },
+    previous: { retention: 72, exploration: 74, precision: 70, efficiency: 81, riskControl: 74, creativity: 84 },
+    selectedQuoteId: 'q-bernbach-01', quoteMatchScore: 0.90,
+    lockStatus: 'locked', lockedBy: '孙八', lockedAt: '2026-04-04T09:00:00',
+    generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 2,
+  },
+  {
+    clientId: 'payeasy', evaluationPeriod: { start: '2026-03-29', end: '2026-04-06' },
+    current: { retention: 82, exploration: 54, precision: 78, efficiency: 74, riskControl: 84, creativity: 62 },
+    previous: { retention: 80, exploration: 52, precision: 76, efficiency: 72, riskControl: 82, creativity: 60 },
+    selectedQuoteId: 'q-grove-01', quoteMatchScore: 0.92,
+    lockStatus: 'locked', lockedBy: '周九', lockedAt: '2026-04-03T16:00:00',
+    generatedAt: '2026-03-29T00:00:00', isDemo: true, version: 3,
+  },
+]
+
+/* ── Persona 查询/操作接口 ── */
+
 export function getPersonaRadarForClient(clientId: string): PersonaRadarDimensions {
-  return clientPersonaRadarByClientId[clientId] ?? {
-    efficiency: 70,
-    riskControl: 70,
-    strategy: 70,
-    creativity: 70,
+  const snap = clientPersonaSnapshots.find(s => s.clientId === clientId)
+  return snap?.current ?? { retention: 70, exploration: 70, precision: 70, efficiency: 70, riskControl: 70, creativity: 70 }
+}
+
+export function getPersonaSnapshotForClient(clientId: string): PersonaSnapshot | undefined {
+  return clientPersonaSnapshots.find(s => s.clientId === clientId)
+}
+
+export function getPersonaQuoteById(quoteId: string): PersonaQuote | undefined {
+  return PERSONA_QUOTES.find(q => q.id === quoteId)
+}
+
+export function getAvailableQuotes(): PersonaQuote[] {
+  return PERSONA_QUOTES.filter(q => q.status === 'available')
+}
+
+export function matchQuoteForRadar(
+  scores: PersonaRadarDimensions,
+  industryTag?: string,
+): { quote: PersonaQuote; matchScore: number } | null {
+  const available = getAvailableQuotes()
+  if (available.length === 0) return null
+
+  const sVals = DIMENSION_KEYS.map(k => scores[k])
+  const sMag = Math.sqrt(sVals.reduce((s, v) => s + v * v, 0))
+
+  let best: { quote: PersonaQuote; matchScore: number } | null = null
+
+  for (const q of available) {
+    const qVals = DIMENSION_KEYS.map(k => q.dimensionAffinity[k])
+    const qMag = Math.sqrt(qVals.reduce((s, v) => s + v * v, 0))
+    const dot = sVals.reduce((s, v, i) => s + v * qVals[i], 0)
+    let sim = sMag > 0 && qMag > 0 ? dot / (sMag * qMag) : 0
+    if (industryTag && q.tags.includes(industryTag)) sim += 0.05
+    sim = Math.min(sim, 1)
+    if (!best || sim > best.matchScore) best = { quote: q, matchScore: sim }
+  }
+
+  return best && best.matchScore >= 0.5 ? best : null
+}
+
+export function canAlgorithmReplaceQuote(snapshot: PersonaSnapshot): boolean {
+  return snapshot.lockStatus === 'auto_selected' || snapshot.lockStatus === 'unlocked'
+}
+
+export function isRejectedTask(snapshot: PersonaSnapshot): boolean {
+  return snapshot.rejectedFrom != null && snapshot.rejectedReason != null
+}
+
+export function getSnapshotsForReview(filter?: {
+  reviewStage?: ReviewStage
+  lockStatus?: PersonaLockStatus
+}): PersonaSnapshot[] {
+  return clientPersonaSnapshots.filter(s => {
+    if (filter?.reviewStage && s.reviewStage !== filter.reviewStage) return false
+    if (filter?.lockStatus && s.lockStatus !== filter.lockStatus) return false
+    return true
+  })
+}
+
+export function getAllPersonaSnapshots(): PersonaSnapshot[] {
+  return clientPersonaSnapshots
+}
+
+export function getQuoteLibraryHealth() {
+  const quotes = PERSONA_QUOTES
+  const available = quotes.filter(q => q.status === 'available')
+  const locked = clientPersonaSnapshots.filter(s => s.lockStatus === 'locked')
+  const usedQuoteIds = new Set(locked.map(s => s.selectedQuoteId))
+  return {
+    totalAvailable: available.length,
+    totalDraft: quotes.filter(q => q.status === 'draft').length,
+    totalUnderReview: quotes.filter(q => q.status === 'under_review').length,
+    totalRetired: quotes.filter(q => q.status === 'retired').length,
+    utilizationRate: available.length > 0 ? usedQuoteIds.size / available.length : 0,
   }
 }
 

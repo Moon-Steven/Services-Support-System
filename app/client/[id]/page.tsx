@@ -16,6 +16,9 @@ import { ApprovalChain } from '@/components/ui/ApprovalChain'
 import { CapabilityRadar } from '@/components/around-the-clock/CapabilityRadar'
 import {
   getPersonaRadarForClient,
+  getPersonaSnapshotForClient,
+  getPersonaQuoteById,
+  PERSONA_LOCK_STATUS_LABEL,
   getClockEntryNarrative,
   obfuscateForSophistication,
   kpiRefLabel,
@@ -57,6 +60,8 @@ export default function ClientDetailPage() {
   // Clock & Learning Notes data
   const clockConfig = useMemo(() => clientClockConfigs.find((c) => c.clientId === id) || null, [id])
   const personaRadar = useMemo(() => getPersonaRadarForClient(id), [id])
+  const personaSnapshot = useMemo(() => getPersonaSnapshotForClient(id), [id])
+  const personaQuote = useMemo(() => personaSnapshot ? getPersonaQuoteById(personaSnapshot.selectedQuoteId) : undefined, [personaSnapshot])
   const healthScoreM6 = useMemo(() => {
     const h = id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0)
     return 68 + (h % 24)
@@ -577,14 +582,44 @@ export default function ClientDetailPage() {
             </Card>
           )}
 
-          {/* Persona capability radar (Around the Clock 联动) */}
+          {/* Persona capability radar */}
           <Card padding="none">
             <div className="px-[var(--space-4)] pt-[var(--space-3)] pb-[var(--space-1)]">
-              <div className="text-12-bold text-grey-06 uppercase tracking-wide">Persona · 能力雷达</div>
-              <p className="text-10-regular text-grey-08 mt-[var(--space-1)]">与 Always On 正面叙事联动（演示）</p>
+              <div className="flex items-center justify-between">
+                <div className="text-12-bold text-grey-06 uppercase tracking-wide">Persona</div>
+                <div className="flex items-center gap-[var(--space-1)]">
+                  {personaSnapshot?.isDemo && (
+                    <span role="status" className="text-10-regular px-[6px] py-[1px] rounded-full bg-grey-12 text-grey-08">演示数据</span>
+                  )}
+                  {personaSnapshot && (
+                    <span className={`text-10-regular px-[6px] py-[1px] rounded-full ${
+                      personaSnapshot.lockStatus === 'locked' ? 'bg-cyan-tint-08 text-l-cyan' :
+                      personaSnapshot.lockStatus === 'in_review' ? 'bg-orange-tint-10 text-orange' :
+                      'bg-grey-12 text-grey-06'
+                    }`}>
+                      {PERSONA_LOCK_STATUS_LABEL[personaSnapshot.lockStatus]}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {personaSnapshot && (
+                <p className="text-10-regular text-grey-08 mt-[var(--space-1)]">
+                  {personaSnapshot.evaluationPeriod.start.slice(5)} – {personaSnapshot.evaluationPeriod.end.slice(5)}
+                </p>
+              )}
             </div>
+            {personaQuote && (
+              <div className="px-[var(--space-4)] pb-[var(--space-2)]">
+                <p className="text-10-regular text-grey-08">
+                  {personaQuote.author} ({personaQuote.authorLifespan})
+                </p>
+                <blockquote className="text-14-medium text-grey-01 mt-[var(--space-1)] italic leading-relaxed">
+                  &ldquo;{personaSnapshot?.copyOverride || personaQuote.text}&rdquo;
+                </blockquote>
+              </div>
+            )}
             <div className="px-[var(--space-4)] pb-[var(--space-3)] flex justify-center">
-              <CapabilityRadar scores={personaRadar} />
+              <CapabilityRadar scores={personaRadar} previousScores={personaSnapshot?.previous} />
             </div>
           </Card>
 
