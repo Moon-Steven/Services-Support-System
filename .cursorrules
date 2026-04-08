@@ -1,0 +1,24 @@
+## Design Context
+
+### Users
+- Primary users are internal delivery, operations, and sales teams in a B2B service support workflow.
+- User priority is delivery-first. Interfaces should optimize delivery review speed and decision confidence before downstream handoff.
+- Core job-to-be-done is to interpret AI behavior, review business-facing content, and publish accurate client-facing narratives with low ambiguity.
+
+### Brand Personality
+- Brand personality: professional.
+- Emotional goal for Persona and related operational modules: stable and trustworthy.
+- Communication style should be explicit, concise, and audit-friendly, with clear status semantics and minimal decorative noise.
+
+### Aesthetic Direction
+- Visual direction follows an enterprise, neutral, information-dense style: dark navigation, light workspace, cyan as functional accent, restrained contrast hierarchy.
+- No explicit external references provided; continue extending existing in-repo design tokens and component patterns.
+- No anti-reference constraints were specified; avoid consumer-style playful or trendy visual language that weakens operational credibility.
+- Accessibility target: WCAG AA.
+
+### Design Principles
+1. Delivery-first clarity: default information hierarchy, actions, and copy must prioritize delivery team review efficiency.
+2. Trust over flair: prefer calm structure, predictable layouts, and semantic status cues over visual novelty.
+3. System consistency: always reuse existing tokens, typography utilities, spacing scale, and shared UI components before introducing new patterns.
+4. Auditable interactions: critical actions must have explicit state transitions, visible rationale, and traceable outcomes.
+5. Accessible by default: color is never the only signal; maintain readable contrast, focus visibility, keyboard reachability, and AA-compliant semantics.

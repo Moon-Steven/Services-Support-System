@@ -118,18 +118,10 @@ export type ClockEntry = {
   kpiRefs?: ClockKpiRef[]
 }
 
-export type ToneVariant = 'professional' | 'witty' | 'casual'
-export const TONE_OPTIONS: { value: ToneVariant; label: string }[] = [
-  { value: 'professional', label: '专业版' },
-  { value: 'witty', label: '幽默版' },
-  { value: 'casual', label: '轻松版' },
-]
-
 export type IndustryTemplate = {
   id: string
   industry: string
   name: string
-  tone: ToneVariant
   entries: ClockEntry[]
 }
 
@@ -138,10 +130,8 @@ export type ClientSophistication = 'basic' | 'standard' | 'advanced'
 export type ClientClockConfig = {
   clientId: string
   templateId: string
-  tone: ToneVariant
   entries: ClockEntry[]
   lastPublished?: string
-  /** 客户认知水平，驱动对客文案模糊化强度 */
   clientSophistication?: ClientSophistication
 }
 
@@ -167,7 +157,7 @@ export type LearningNote = {
 /* ── Industry Templates Mock Data ── */
 export const industryTemplates: IndustryTemplate[] = [
   {
-    id: 'tpl-gaming', industry: '游戏', name: '游戏行业标准', tone: 'witty',
+    id: 'tpl-gaming', industry: '游戏', name: '游戏行业标准',
     entries: [
       { id: 'g1', time: '00:30', category: 'Monitor', description: 'Midnight gamer surge detected, monitoring CPI spike pattern', effect: { type: 'blocked', amount: 2400, currency: '¥' }, active: true, order: 0 },
       { id: 'g2', time: '02:17', category: 'Bidding', description: 'Detected bidding env change, auto-reduced bid 8%', effect: { type: 'saved', amount: 3200, currency: '¥' }, active: true, order: 1 },
@@ -182,7 +172,7 @@ export const industryTemplates: IndustryTemplate[] = [
     ],
   },
   {
-    id: 'tpl-ecom', industry: '电商', name: '电商行业标准', tone: 'professional',
+    id: 'tpl-ecom', industry: '电商', name: '电商行业标准',
     entries: [
       { id: 'e1', time: '01:00', category: 'Monitor', description: '夜间流量监控，异常点击率来源已标记', effect: { type: 'blocked', amount: 1500, currency: '¥' }, active: true, order: 0 },
       { id: 'e2', time: '06:00', category: 'Strategy', description: '早间数据回顾，调整今日出价策略', effect: { type: 'none' }, active: true, order: 1 },
@@ -196,7 +186,7 @@ export const industryTemplates: IndustryTemplate[] = [
     ],
   },
   {
-    id: 'tpl-reading', industry: '小说/阅读', name: '阅读行业标准', tone: 'witty',
+    id: 'tpl-reading', industry: '小说/阅读', name: '阅读行业标准',
     entries: [
       {
         id: 'r1',
@@ -226,7 +216,7 @@ export const industryTemplates: IndustryTemplate[] = [
     ],
   },
   {
-    id: 'tpl-fintech', industry: '金融', name: '金融行业标准', tone: 'professional',
+    id: 'tpl-fintech', industry: '金融', name: '金融行业标准',
     entries: [
       { id: 'f1', time: '02:00', category: 'Monitor', description: '夜间合规扫描完成，所有素材通过审查', effect: { type: 'none' }, active: true, order: 0 },
       { id: 'f2', time: '07:30', category: 'Strategy', description: '工作日开盘前投放策略部署', effect: { type: 'none' }, active: true, order: 1 },
@@ -243,26 +233,26 @@ export const industryTemplates: IndustryTemplate[] = [
 /* ── Client Clock Configs Mock Data ── */
 export const clientClockConfigs: ClientClockConfig[] = [
   {
-    clientId: 'wavebone', templateId: 'tpl-reading', tone: 'witty',
+    clientId: 'wavebone', templateId: 'tpl-reading',
     lastPublished: '2026-03-25',
     clientSophistication: 'standard',
     entries: industryTemplates.find((t) => t.id === 'tpl-reading')!.entries,
   },
   {
-    clientId: 'gameon', templateId: 'tpl-gaming', tone: 'witty',
+    clientId: 'gameon', templateId: 'tpl-gaming',
     lastPublished: '2026-03-24',
     entries: industryTemplates.find((t) => t.id === 'tpl-gaming')!.entries,
   },
   {
-    clientId: 'shopmax', templateId: 'tpl-ecom', tone: 'professional',
+    clientId: 'shopmax', templateId: 'tpl-ecom',
     entries: industryTemplates.find((t) => t.id === 'tpl-ecom')!.entries.slice(0, 6),
   },
   {
-    clientId: 'fintech', templateId: 'tpl-fintech', tone: 'professional',
+    clientId: 'fintech', templateId: 'tpl-fintech',
     entries: industryTemplates.find((t) => t.id === 'tpl-fintech')!.entries,
   },
   {
-    clientId: 'medplus', templateId: 'tpl-ecom', tone: 'professional',
+    clientId: 'medplus', templateId: 'tpl-ecom',
     lastPublished: '2026-03-23',
     entries: [
       { id: 'mp1', time: '01:30', category: 'Monitor', description: 'Compliance scan completed — all active creatives passed health-category review', effect: { type: 'none' }, active: true, order: 0 },
@@ -278,7 +268,7 @@ export const clientClockConfigs: ClientClockConfig[] = [
     ],
   },
   {
-    clientId: 'quickbuy', templateId: 'tpl-ecom', tone: 'witty',
+    clientId: 'quickbuy', templateId: 'tpl-ecom',
     lastPublished: '2026-03-24',
     entries: [
       { id: 'qb1', time: '00:15', category: 'Monitor', description: 'Late-night impulse buyers detected — flash sale ad group auto-activated', effect: { type: 'none' }, active: true, order: 0 },
@@ -294,7 +284,7 @@ export const clientClockConfigs: ClientClockConfig[] = [
     ],
   },
   {
-    clientId: 'novelking', templateId: 'tpl-reading', tone: 'witty',
+    clientId: 'novelking', templateId: 'tpl-reading',
     lastPublished: '2026-03-25',
     entries: [
       { id: 'nk1', time: '02:00', category: 'Bidding', description: 'Night owls reading session peak — auto-increased bids on novel discovery ads 15%', effect: { type: 'none' }, active: true, order: 0 },
@@ -310,7 +300,7 @@ export const clientClockConfigs: ClientClockConfig[] = [
     ],
   },
   {
-    clientId: 'payeasy', templateId: 'tpl-fintech', tone: 'professional',
+    clientId: 'payeasy', templateId: 'tpl-fintech',
     lastPublished: '2026-03-22',
     entries: industryTemplates.find((t) => t.id === 'tpl-fintech')!.entries.map((e) => ({
       ...e,

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Avatar } from '@/components/ui/Avatar'
 import { Dialog } from '@/components/ui/Dialog'
-import { clients, ioOrders, changeLogs, complianceRequiredIndustries, clientPerformance, clientProposals, clientAssets, clientClockConfigs, learningNotes, industryTemplates, TONE_OPTIONS, gradeChangeRequests, GRADE_CHANGE_APPROVAL_STEPS } from '@/lib/data'
+import { clients, ioOrders, changeLogs, complianceRequiredIndustries, clientPerformance, clientProposals, clientAssets, clientClockConfigs, learningNotes, industryTemplates, gradeChangeRequests, GRADE_CHANGE_APPROVAL_STEPS } from '@/lib/data'
 import type { IOOrder, ChangeLog, ClockEntry, LearningNote, GradeChangeRequest } from '@/lib/data'
 import { CampaignSnapshot } from '@/components/client/CampaignSnapshot'
 import { OnboardingStepper } from '@/components/client/OnboardingStepper'
@@ -655,13 +655,12 @@ export default function ClientDetailPage() {
             <div className="px-[var(--space-4)] pb-[var(--space-3)]">
               {clockConfig ? (() => {
                 const activeEntries = clockConfig.entries.filter((e) => e.active)
-                const toneLabel = TONE_OPTIONS.find((t) => t.value === clockConfig.tone)?.label || clockConfig.tone
                 const template = industryTemplates.find((t) => t.id === clockConfig.templateId)
                 const soph = clockConfig.clientSophistication || 'standard'
                 return (
                   <>
                     {/* Stats row */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-[var(--space-2)] mb-[var(--space-2)]">
+                    <div className="grid grid-cols-3 gap-[var(--space-2)] mb-[var(--space-2)]">
                       <div className="bg-bg rounded-md px-[var(--space-2)] py-[var(--space-1)] text-center">
                         <div className="text-14-bold text-grey-01">{clockConfig.entries.length}</div>
                         <div className="text-10-regular text-grey-08">总条目</div>
@@ -673,10 +672,6 @@ export default function ClientDetailPage() {
                       <div className="bg-bg rounded-md px-[var(--space-2)] py-[var(--space-1)] text-center">
                         <div className="text-14-bold text-l-cyan">{healthScoreM6}</div>
                         <div className="text-10-regular text-grey-08">健康分 M6</div>
-                      </div>
-                      <div className="bg-bg rounded-md px-[var(--space-2)] py-[var(--space-1)] text-center">
-                        <div className="text-14-bold text-grey-01">{toneLabel}</div>
-                        <div className="text-10-regular text-grey-08">语气</div>
                       </div>
                     </div>
 

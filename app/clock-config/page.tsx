@@ -15,9 +15,9 @@ import { Stepper } from '@/components/ui/Stepper'
 import { useClient } from '@/lib/client-context'
 import {
   clients, clientClockConfigs, industryTemplates,
-  CLOCK_CATEGORIES, TONE_OPTIONS,
+  CLOCK_CATEGORIES,
 } from '@/lib/data'
-import type { ClockEntry, ClockCategory, ToneVariant, ClientSophistication } from '@/lib/data'
+import type { ClockEntry, ClockCategory, ClientSophistication } from '@/lib/data'
 import {
   cloneAtcReviewEvents,
   getClockEntryNarrative,
@@ -341,7 +341,6 @@ function ClockConfigPageContent() {
 
   /* ── Timeline 配置状态 ── */
   const [entries, setEntries] = useState<ClockEntry[]>([])
-  const [tone, setTone] = useState<ToneVariant>('professional')
   const [sophistication, setSophistication] = useState<ClientSophistication>('standard')
   const [initialized, setInitialized] = useState(false)
   const [editEntry, setEditEntry] = useState<ClockEntry | null>(null)
@@ -381,7 +380,6 @@ function ClockConfigPageContent() {
     const cl = clients.find((c) => c.id === activeClientId)
     const tpl = config ? industryTemplates.find((t) => t.id === config.templateId) : cl ? industryTemplates.find((t) => t.industry === cl.industry) : null
     setEntries(config?.entries || tpl?.entries || [])
-    setTone(config?.tone || tpl?.tone || 'professional')
     setSophistication(config?.clientSophistication || 'standard')
   }, [activeClientId])
 
@@ -404,7 +402,7 @@ function ClockConfigPageContent() {
     setEntries((prev) => { const idx = prev.findIndex((e) => e.id === entry.id); if (idx >= 0) { const u = [...prev]; u[idx] = entry; return u } return [...prev, { ...entry, order: prev.length }] })
     setEditEntry(null); setShowAddDialog(false)
   }
-  const handleResetFromTemplate = () => { if (matchingTemplate) { setEntries(matchingTemplate.entries); setTone(matchingTemplate.tone) } }
+  const handleResetFromTemplate = () => { if (matchingTemplate) { setEntries(matchingTemplate.entries) } }
   const handlePublish = () => { setPublishedMsg(true); setTimeout(() => setPublishedMsg(false), 2000) }
   const activeCount = entries.filter((e) => e.active).length
 
@@ -566,7 +564,6 @@ function ClockConfigPageContent() {
                 const tpl = config ? industryTemplates.find((t) => t.id === config.templateId) : industryTemplates.find((t) => t.industry === cl.industry)
                 const entryList = config?.entries || tpl?.entries || []
                 const ac = entryList.filter((e) => e.active).length
-                const toneLabel = TONE_OPTIONS.find((t) => t.value === (config?.tone || tpl?.tone || 'professional'))?.label || '专业版'
                 const pendingCount = pendingByClient.get(cl.id) || 0
                 return (
                   <Card key={cl.id} padding="none">
@@ -583,7 +580,6 @@ function ClockConfigPageContent() {
                             <div className="flex items-center gap-[var(--space-3)] mt-[2px]">
                               <span className="text-12-regular text-grey-08">{entryList.length} 条目</span>
                               <span className="text-12-regular text-l-cyan">{ac} 已启用</span>
-                              <span className="text-12-regular text-grey-08">{toneLabel}</span>
                               {pendingCount > 0 && (
                                 <span className="text-12-regular text-orange cursor-pointer hover:underline flex items-center gap-[3px]"
                                   onClick={(e) => { e.stopPropagation(); setClient({ id: cl.id, name: cl.name, industry: cl.industry, grade: cl.grade }); setTopTab('review') }}>
@@ -626,19 +622,6 @@ function ClockConfigPageContent() {
               </div>
               <div className="flex flex-col gap-[var(--space-3)]">
                 <Card><div className="text-12-bold text-grey-06 mb-[var(--space-2)]">时钟预览</div><ClockPreview entries={entries} /></Card>
-                <Card>
-                  <div className="text-12-bold text-grey-06 mb-[var(--space-2)]">内容语气</div>
-                  <div className="flex flex-col gap-[var(--space-1)]">
-                    {TONE_OPTIONS.map((opt) => (
-                      <button key={opt.value} onClick={() => setTone(opt.value)}
-                        className={`flex items-center gap-[var(--space-2)] px-[var(--space-3)] py-[var(--space-2)] rounded-lg text-left border cursor-pointer transition-all font-[inherit] ${
-                          tone === opt.value ? 'border-grey-01 bg-selected shadow-sm' : 'border-stroke bg-white hover:bg-selected'}`}>
-                        <span className={`w-[8px] h-[8px] rounded-full ${tone === opt.value ? 'bg-l-cyan' : 'bg-grey-12'}`} />
-                        <span className={`text-14-medium ${tone === opt.value ? 'text-grey-01' : 'text-grey-06'}`}>{opt.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </Card>
                 <Card>
                   <div className="text-12-bold text-grey-06 mb-[var(--space-2)]">客户认知水平</div>
                   <p className="text-10-regular text-grey-08 mb-[var(--space-2)]">影响对客文案模糊化强度</p>
