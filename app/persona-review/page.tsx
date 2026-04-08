@@ -187,7 +187,7 @@ export default function PersonaReviewPage() {
               <span className="text-14-bold text-l-cyan">待</span>
             </div>
             <div>
-              <p className="text-12-medium text-grey-06">我的待审</p>
+              <p className="text-12-medium text-grey-06">我的待处理</p>
               <p className="text-20-bold text-grey-01">{todoCount}</p>
             </div>
           </div>
@@ -198,7 +198,7 @@ export default function PersonaReviewPage() {
               <span className="text-14-bold text-orange">低</span>
             </div>
             <div>
-              <p className="text-12-medium text-grey-06">待审低匹配</p>
+              <p className="text-12-medium text-grey-06">待处理低匹配</p>
               <p className="text-20-bold text-orange">{lowMatchInTodoCount}</p>
             </div>
           </div>

@@ -136,7 +136,7 @@ export default function PersonaOverviewPage() {
       <div className="flex gap-[var(--space-4)] flex-wrap">
         <StatCard label="已匹配" count={matchedCount} color="cyan" />
         <StatCard label="审核中" count={reviewCount} color="orange" />
-        <StatCard label="待审/待匹配" count={pendingCount} color="grey" />
+        <StatCard label="待处理" count={pendingCount} color="grey" />
         <StatCard label="异常" count={anomalyCount} color="red" />
       </div>
 
@@ -146,7 +146,7 @@ export default function PersonaOverviewPage() {
             名言库健康度:
             <span className="text-l-cyan ml-[var(--space-1)]">{health.totalAvailable} 可用</span>
             <span className="text-grey-06 mx-[var(--space-1)]">/</span>
-            <span className="text-orange">{health.totalUnderReview} 待审</span>
+            <span className="text-orange">{health.totalUnderReview} 待处理</span>
             <span className="text-grey-06 mx-[var(--space-1)]">/</span>
             <span className="text-red">{health.totalRetired} 已下架</span>
           </p>

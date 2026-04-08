@@ -118,7 +118,7 @@ const audit = (
 
 function seedEvents(): AtcReviewEvent[] {
   return [
-    // ── 交付待审 ──
+    // ── 交付待处理 ──
     {
       id: 'atc-1',
       clientId: 'wavebone',
@@ -174,7 +174,7 @@ function seedEvents(): AtcReviewEvent[] {
       ],
     },
 
-    // ── 运营待审 ──
+    // ── 运营待处理 ──
     {
       id: 'atc-2',
       clientId: 'quickbuy',
@@ -233,7 +233,7 @@ function seedEvents(): AtcReviewEvent[] {
       ],
     },
 
-    // ── 销售待审 ──
+    // ── 销售待处理 ──
     {
       id: 'atc-3',
       clientId: 'medplus',
@@ -564,9 +564,9 @@ export const PERSONA_LOCK_STATUS_LABEL: Record<PersonaLockStatus, string> = {
 }
 
 export const REVIEW_STAGE_LABEL: Record<ReviewStage, string> = {
-  at_delivery: '交付待审',
-  at_ops: '行运待审',
-  at_sales: '销售待审',
+  at_delivery: '交付待处理',
+  at_ops: '行运待处理',
+  at_sales: '销售待处理',
 }
 
 /* ── 名言种子数据 ── */

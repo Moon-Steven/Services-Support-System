@@ -22,7 +22,7 @@ import {
 const STATUS_CONFIG: Record<QuoteLibraryStatus, { label: string; variant: 'cyan' | 'grey' | 'orange' | 'red' }> = {
   available: { label: '可用', variant: 'cyan' },
   draft: { label: '草稿', variant: 'grey' },
-  under_review: { label: '待审', variant: 'orange' },
+  under_review: { label: '待处理', variant: 'orange' },
   retired: { label: '已下架', variant: 'red' },
 }
 
@@ -119,7 +119,7 @@ export default function QuoteLibraryPage() {
   const statusTabs = useMemo(() => [
     { key: 'all', label: '全部', count: PERSONA_QUOTES.length },
     { key: 'draft', label: '草稿', count: health.totalDraft },
-    { key: 'under_review', label: '待审', count: health.totalUnderReview },
+    { key: 'under_review', label: '待处理', count: health.totalUnderReview },
     { key: 'available', label: '可用', count: health.totalAvailable },
     { key: 'retired', label: '已下架', count: health.totalRetired },
   ], [health])
@@ -301,7 +301,7 @@ export default function QuoteLibraryPage() {
         <div className="flex items-center gap-[var(--space-6)] px-[var(--space-5)] py-[var(--space-3)] border-t border-stroke text-12-regular text-grey-06">
           <span>{health.totalAvailable} 条可用</span>
           <span>·</span>
-          <span>{health.totalUnderReview} 条待审</span>
+          <span>{health.totalUnderReview} 条待处理</span>
           <span>·</span>
           <span>{health.totalRetired} 条已下架</span>
           <span className="mx-1">|</span>
